@@ -1,0 +1,33 @@
+{
+    "name": "FishDex Dev Container",
+    "dockerComposeFile": [
+        "../docker-compose.dev.yml"
+    ],
+    "service": "fishdex-backend",
+    "workspaceFolder": "/workspace",
+    "overrideCommand": false,
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "python.defaultInterpreterPath": "python",
+                "python.analysis.autoImportCompletions": true,
+                "python.analysis.typeCheckingMode": "basic",
+                "python.linting.flake8Enabled": true,
+                "python.linting.flake8Args": [
+                    "--max-line-length=88"
+                ],
+                "python.formatting.provider": "black"
+            },
+            "extensions": [
+                "ms-python.python",
+                "ms-python.black-formatter",
+                "ms-python.flake8",
+                "ms-azuretools.vscode-docker",
+                "aaron-bond.better-comments",
+                "usernamehw.errorlens",
+                "ms-python.vscode-pylance",
+                "christian-kohler.path-intellisense"
+            ]
+        }
+    }
+}

@@ -1,0 +1,54 @@
+services:
+  fishdex-backend:
+    image: fishdex-backend:1.0.0
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: fishdex-backend  
+    command: ["bash","docker/entrypoint.sh"]
+    volumes:
+      - ./:/workspace
+      - logs_django:/var/log/django
+    working_dir: /workspace  
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.dev
+    secrets:
+      - pg_user
+      - pg_password
+      - pg_db
+      - django_secret_key
+    depends_on:
+      - fishdex-postgres-db
+
+  fishdex-postgres-db:
+    image: postgres:16
+    container_name: fishdex-postgres-db
+    restart: always
+    environment:
+      POSTGRES_DB_FILE: /run/secrets/pg_db
+      POSTGRES_USER_FILE: /run/secrets/pg_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/pg_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    secrets:
+      - pg_user
+      - pg_password
+      - pg_db
+
+secrets:
+  pg_user:
+    file: ./secrets/pg_user.txt
+  pg_password:
+    file: ./secrets/pg_password.txt
+  pg_db:
+    file: ./secrets/pg_db.txt
+  django_secret_key:
+    file: ./secrets/django_secret_key.txt
+
+volumes:
+  postgres_data:
+  logs_django:  
