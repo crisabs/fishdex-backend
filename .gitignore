@@ -1,0 +1,107 @@
+# ==============================
+# Python
+# ==============================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.egg
+*.egg-info/
+.eggs/
+dist/
+build/
+pip-wheel-metadata/
+*.manifest
+*.spec
+
+# ==============================
+# Entornos virtuales
+# ==============================
+.venv/
+venv/
+env/
+ENV/
+*.env
+.env.*
+!.env.example   # se conserva un ejemplo sin secretos reales
+
+# ==============================
+# Docker
+# ==============================
+# Archivos locales de configuración y logs
+**/docker-compose.override.yml
+**/docker-compose.local.yml
+**/Dockerfile.dev
+tmp/
+logs/
+*.log
+
+# ==============================
+# Secretos y credenciales
+# ==============================
+secrets/
+!secrets/README.md   # explica cómo generar los secretos
+
+# ==============================
+# IDEs y editores
+# ==============================
+.idea/
+.vscode/
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# ==============================
+# Bases de datos locales
+# ==============================
+*.sqlite3
+*.db
+
+# ==============================
+# Tests y cobertura
+# ==============================
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+test-results/
+junit-*.xml
+
+# ==============================
+# Monitoring y logs temporales
+# ==============================
+monitoring/data/
+monitoring/tmp/
+monitoring/logs/
+
+# ==============================
+# Archivos del sistema operativo
+# ==============================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==============================
+# Certificados y claves
+# ==============================
+*.pem
+*.key
+*.crt
+*.cer
+*.csr
+*.pfx
+
+# ==============================
+# Reglas globales
+# ==============================
+**/venv
+**/__pycache__
+**/.pytest_cache
+**/logs
