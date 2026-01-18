@@ -1,8 +1,11 @@
 from .base import AppException
-from rest_framework import status
 
 
-class ErrorRegistrationAccountExist(AppException):
-    status_code = status.HTTP_409_CONFLICT
-    default_code = "ACCOUNT_REGISTRATION_ERROR"
-    default_message = "The current data already is registered with an account"
+class RepositoryError(AppException):
+    default_code = "REPOSITORY_ERROR"
+    default_message = "Database operation failed"
+
+
+class AccountAlreadyExistsError(AppException):
+    default_code = "ACCOUNT_ALREADY_EXIST"
+    default_message = "Account already exist"
