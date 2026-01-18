@@ -5,7 +5,7 @@ Contiene los valores comunes para todos los entornos.
 
 import sys
 from pathlib import Path
-from config.settings import settings as app_settings
+from config.service_settings import settings as service_settings
 from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parents[2]
@@ -50,10 +50,10 @@ SIMPLE_JWT = {
 }
 
 # --- URLs de servicios ---
-DJANGO_API_URL = app_settings.django_api_url
+DJANGO_API_URL = service_settings.django_api_url
 
 # --- Debug ---
-DEBUG = app_settings.debug
+DEBUG = service_settings.debug
 
 # --- Seguridad ---
 SECRET_KEY = read_secret("django_secret_key") or "insecure-dev-key"
@@ -72,6 +72,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "drf_spectacular",
     "corsheaders",
+    "accounts",
+    "fishers",
 ]
 
 # --- Middleware ---
