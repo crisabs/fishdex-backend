@@ -5,11 +5,16 @@
     ],
     "service": "fishdex-backend",
     "workspaceFolder": "/workspace",
+    "mounts": [
+        "source=${localWorkspaceFolder},target=/workspace,type=bind"
+    ],
     "overrideCommand": false,
     "customizations": {
         "vscode": {
             "settings": {
-                "python.defaultInterpreterPath": "python",
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "python.analysis.autoSearchPaths": true,
+                "python.analysis.useLibraryCodeForTypes": true,
                 "python.analysis.autoImportCompletions": true,
                 "python.analysis.typeCheckingMode": "basic",
                 "python.linting.flake8Enabled": true,
