@@ -44,6 +44,7 @@ class AccountLogoutAPIView(GenericAPIView):
     serializer_class = AccountLogoutSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    @extend_schema(request=AccountLogoutSerializer)
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
