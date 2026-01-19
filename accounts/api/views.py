@@ -1,4 +1,3 @@
-# from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
 from rest_framework import status
 from rest_framework.response import Response
@@ -8,7 +7,10 @@ from accounts.api.serializers.account_register_serializer import (
 from accounts.api.serializers.account_register_response_serializer import (
     AccountRegisterResponseSerializer,
 )
-from accounts.domain.services.accounts_service import register_account
+from accounts.api.serializers.account_logout_serializer import AccountLogoutSerializer
+
+from rest_framework import permissions
+from accounts.domain.services.accounts_service import register_account, logout_account
 from rest_framework.permissions import AllowAny
 
 from drf_spectacular.utils import extend_schema
@@ -27,7 +29,7 @@ class AccountRegisterAPIView(GenericAPIView):
     )
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid()
+        serializer.is_valid(raise_exception=True)
 
         result = register_account(
             email=serializer.validated_data["email"],
@@ -36,3 +38,15 @@ class AccountRegisterAPIView(GenericAPIView):
         return Response(
             {"success": True, "data": result["data"]}, status=status.HTTP_200_OK
         )
+
+
+class AccountLogoutAPIView(GenericAPIView):
+    serializer_class = AccountLogoutSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        logout_account(refresh_token=serializer.validated_data["refresh"])
+        return Response(status=status.HTTP_204_NO_CONTENT)
