@@ -13,6 +13,13 @@ logger = logging.getLogger(__name__)
 
 
 def register_account(email, password) -> Dict[str, Any]:
+    """
+    Creates a new  account using the provided email and password
+
+    Raises:
+      AccountAlreadyExistsError: if an account with the given email aleady exists
+      or if a repository error occurs during account creation.
+    """
     try:
         create_account_repository(email=email, password=password)
         return {"data": "OK"}
@@ -24,6 +31,10 @@ def register_account(email, password) -> Dict[str, Any]:
 
 
 def logout_account(refresh_token: str) -> None:
+    """
+    Invalidates a refresh token by adding it to the blacklist.
+    Raises ValidationError if the token is missing or invalid.
+    """
     if not refresh_token:
         raise ValidationError("refresh token required")
     try:
