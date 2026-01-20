@@ -28,6 +28,7 @@ urlpatterns = [
     # Auth
     path("api/auth/", include("accounts.api.urls")),
     # Domain Api Calls
+    path("api/fishers/", include("fishers.api.urls")),
     # Documentation
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
