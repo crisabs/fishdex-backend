@@ -1,0 +1,18 @@
+from rest_framework.generics import GenericAPIView
+from rest_framework import status
+from rest_framework import permissions
+from rest_framework.response import Response
+from fishers.api.serializers.fisher_me_response_serializer import (
+    FisherMeResponseSerializer,
+)
+from drf_spectacular.utils import extend_schema
+from fishers.domain.services.fishers_service import get_fisher_detail_me
+
+
+class FisherMeAPIView(GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    @extend_schema(responses=FisherMeResponseSerializer)
+    def get(self, request):
+        result = get_fisher_detail_me(user=request.user)
+        return Response({"success": True, "data": result}, status=status.HTTP_200_OK)
