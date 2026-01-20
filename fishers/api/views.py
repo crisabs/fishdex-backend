@@ -11,8 +11,12 @@ from fishers.domain.services.fishers_service import get_fisher_detail_me
 
 class FisherMeAPIView(GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = FisherMeResponseSerializer
 
     @extend_schema(responses=FisherMeResponseSerializer)
     def get(self, request):
         result = get_fisher_detail_me(user=request.user)
-        return Response({"success": True, "data": result}, status=status.HTTP_200_OK)
+        return Response(
+            {"success": True, "data": result},
+            status=status.HTTP_200_OK,
+        )
