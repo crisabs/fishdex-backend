@@ -3,7 +3,7 @@ from .base import AppException
 
 class RepositoryError(AppException):
     default_code = "REPOSITORY_ERROR"
-    default_message = "Database operation failed"
+    default_message = "An unexpected database error ocurred."
 
 
 class AccountAlreadyExistsError(AppException):
