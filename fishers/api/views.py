@@ -6,7 +6,16 @@ from fishers.api.serializers.fisher_me_response_serializer import (
     FisherMeResponseSerializer,
 )
 from drf_spectacular.utils import extend_schema
-from fishers.domain.services.fishers_service import get_fisher_detail_me
+from fishers.domain.services.fishers_service import (
+    get_fisher_detail_me,
+    set_fisher_nickname,
+)
+from fishers.api.serializers.fisher_nickname_serializer import (
+    FisherNicknameRequestSerializer,
+)
+from fishers.api.serializers.fisher_nickname_response_serializer import (
+    FisherNicknameResponseSerializer,
+)
 
 
 class FisherMeAPIView(GenericAPIView):
@@ -20,3 +29,26 @@ class FisherMeAPIView(GenericAPIView):
             {"success": True, "data": result},
             status=status.HTTP_200_OK,
         )
+
+
+class FisherNicknameAPIView(GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = FisherNicknameRequestSerializer
+
+    @extend_schema(
+        request=FisherNicknameRequestSerializer,
+        responses=FisherNicknameResponseSerializer,
+    )
+    def patch(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        nickname = serializer.validated_data["nickname"]
+        response_service = set_fisher_nickname(nickname=nickname)
+
+        response_serializer = FisherNicknameResponseSerializer(
+            data={"success": True, "message": response_service}
+        )
+        response_serializer.is_valid(raise_exception=True)
+
+        return Response(response_serializer.data, status=status.HTTP_200_OK)
