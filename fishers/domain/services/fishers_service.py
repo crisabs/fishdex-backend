@@ -5,7 +5,7 @@ from fishers.infrastructure.repositories.fishers_read_repository import (
 from fishers.infrastructure.repositories.fishers_write_repository import (
     set_fisher_nickname_repository,
 )
-from core.exceptions.domain import FisherNotFoundError, FisherInvalidNicknameError
+from core.exceptions.domain import FisherNotFoundError
 
 from core.exceptions.bd import RepositoryError
 import logging
