@@ -44,7 +44,7 @@ class FisherNicknameAPIView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
 
         nickname = serializer.validated_data["nickname"]
-        response_service = set_fisher_nickname(nickname=nickname)
+        response_service = set_fisher_nickname(user=request.user, nickname=nickname)
 
         response_serializer = FisherNicknameResponseSerializer(
             data={"success": True, "message": response_service}
