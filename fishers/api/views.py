@@ -10,7 +10,7 @@ from fishers.domain.services.fishers_service import (
     get_fisher_detail_me,
     set_fisher_nickname,
 )
-from fishers.api.serializers.fisher_nickname_serializer import (
+from fishers.api.serializers.fisher_nickname_request_serializer import (
     FisherNicknameRequestSerializer,
 )
 from fishers.api.serializers.fisher_nickname_response_serializer import (
