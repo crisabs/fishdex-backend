@@ -3,6 +3,7 @@ import pytest
 from fishers.domain.services.fishers_service import get_fisher_detail_me
 from core.exceptions.domain import FisherNotFoundError
 from core.exceptions.bd import RepositoryError
+from fishers.domain.services.fishers_service import set_fisher_nickname
 
 
 @pytest.fixture
@@ -57,3 +58,45 @@ def test_get_fisher_details_repository_error(mock_repo, user):
 
     with pytest.raises(RepositoryError):
         get_fisher_detail_me(user=user)
+
+
+@patch("fishers.domain.services.fishers_service.set_fisher_nickname_repository")
+def test_set_fisher_nickname_success(mock_repository, user):
+    """
+    GIVEN a valid user with a fisher profile
+    WHEN updating the fisher nickname via the service
+    THEN a confirmation message is returned
+    """
+
+    nickname = "OldFisher"
+    mock_repository.return_value = "Fisher nickname updated to {nickname}"
+    result = set_fisher_nickname(user=user, nickname=nickname)
+    assert result == "Fisher nickname updated to {nickname}"
+
+    mock_repository.assert_called_once_with(user=user, nickname=nickname)
+
+
+@patch("fishers.domain.services.fishers_service.set_fisher_nickname_repository")
+def test_set_fisher_nickname_fisher_not_found_error(mock_repository, user):
+    """
+    GIVEN a valid user without an associated fisher profile
+    WHEN the service attempts to update the fisher nickname
+    THEN a FisherNotFoundError is raised
+    """
+    nickname = "OldFisher"
+    mock_repository.side_effect = FisherNotFoundError
+    with pytest.raises(FisherNotFoundError):
+        set_fisher_nickname(user, nickname=nickname)
+
+
+@patch("fishers.domain.services.fishers_service.set_fisher_nickname_repository")
+def test_set_fisher_nickname_repository_error(mock_repository, user):
+    """
+    GIVEN a valid user with an associated fisher profile
+    WHEN then service updates the fisher nickname and a repository error occurs
+    THEN a RepositoryError is raised
+    """
+    nickname = "OldFisher"
+    mock_repository.side_effect = RepositoryError
+    with pytest.raises(RepositoryError):
+        set_fisher_nickname(user, nickname=nickname)
