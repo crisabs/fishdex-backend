@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "accounts",
     "fishers",
+    "fish",
 ]
 
 # --- Middleware ---
