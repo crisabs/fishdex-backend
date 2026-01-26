@@ -1,14 +1,14 @@
 # FishDex Backend API
 
-Backend desarrollado con **Django y Django REST Framework**, orientado al diseño de APIs claras, mantenibles y bien estructuradas. El proyecto aplica una arquitectura API-first, separación por dominios, autenticación JWT, documentación OpenAPI y entorno dockerizado.
+Backend developed with **Django y Django REST Framework**, focused on designing clear, maintainable, and well-structured APIs. The project follows an API-first architecture, domain-based separation, JWT authentication, OpenAPI documentation, and a fully dockerized environment.
 
-FishDex modela un sistema de juego donde cada usuario controla un *Fisher* (pescador), explora zonas, captura peces, gestiona inventario, compra herramientas y mantiene su propia FishDex.
+FishDex models a game system where each user controls a *Fisher* (pescador), explores zones, catches fish, manages inventory, buys tools, and maintains their own FishDex.
 
 ---
 
-## Arquitectura
+## Architecture
 
-Arquitectura desacoplada basada en API:
+Decoupled API-based architecture:
 
 ```
 [ Frontend (Vue) ]  ->  [ Django + DRF API ]  ->  [ PostgreSQL ]
@@ -16,33 +16,33 @@ Arquitectura desacoplada basada en API:
                             +-> OpenAPI / Swagger
 ```
 
-Principios aplicados:
+Applied principles:
 
-* Backend independiente del cliente
-* Contrato de API explícito (OpenAPI)
-* Autenticación stateless con JWT
-* Separación por dominios funcionales
-* Lógica de negocio fuera de las views
+* Backend independent from the client
+* Explicit API contract (OpenAPI)
+* Stateless authentication with JWT
+* Functional domain separation
+* Business logic outside the views
 
 ---
 
-## Dominio y modelo de datos
+## Domain and Data Model
 
-El dominio gira en torno a la progresión del Fisher y sus interacciones:
+The domain revolves around the Fisher’s progression and interactions:
 
-* Cada **User** tiene un único **Fisher**
-* El Fisher acumula nivel, experiencia y monedas
-* Los peces se capturan de forma individual
-* Cada captura tiene atributos propios (peso, memoria, fecha)
-* La FishDex resume especies capturadas
+* Each **User** has a single **Fisher**
+* The Fisher gains levels, experience, and coins
+* Fish are caught individually
+* Each catch has its own attributes (weight, memory, date)
+* The FishDex summarizes captured species
 
-### Modelos principales
+### Core Models
 
 **User**
-Autenticación por email.
+Email-based authentication.
 
 **Fisher**
-Perfil del jugador.
+Player profile.
 
 * user (OneToOne)
 * nickname
@@ -50,7 +50,7 @@ Perfil del jugador.
 * current_zone
 
 **Fish**
-Catálogo global de especies.
+Global species catalog.
 
 * name, description
 * habitat (RIVER | LAKE | SEA | OCEAN)
@@ -58,7 +58,7 @@ Catálogo global de especies.
 * base_weight, base_price
 
 **InventoryItem**
-Captura individual.
+Individual catch.
 
 * fisher, fish
 * weight
@@ -67,7 +67,7 @@ Captura individual.
 * caught_at
 
 **Item**
-Objetos de tienda.
+Store items.
 
 * name
 * type (ROD | BAIT)
@@ -75,29 +75,29 @@ Objetos de tienda.
 * effect
 
 **Zone**
-Zonas del mundo.
+World zones.
 
 * name
 * min_level
 
 ---
 
-## Organización por apps
+## App Organization
 
-Las apps representan dominios y casos de uso, no pantallas ni CRUD genéricos.
+Apps represent domains and use cases, not screens or generic CRUD.
 
-* **accounts**: autenticación y tokens
-* **fishers**: perfil y progresión del jugador
-* **fish**: catálogo de especies
-* **inventory**: capturas individuales
-* **dex**: resumen agregado por especie
-* **store**: compra y venta
-* **zones**: gestión de zonas
-* **capture**: lógica de aparición y captura
+* **accounts**: authentication and tokens
+* **fishers**: player profile and progression
+* **fish**: species catalog
+* **inventory**: individual catches
+* **dex**: aggregated summary by species
+* **store**: buying and selling
+* **zones**: zone management
+* **capture**: spawning and capture logic
 
 ---
 
-## Endpoints principales
+## Main Endpoints
 
 **Auth**
 
@@ -111,14 +111,14 @@ Las apps representan dominios y casos de uso, no pantallas ni CRUD genéricos.
 * GET `/api/fisher/me/`
 * PATCH `/api/fisher/nickname/`
 
-**Inventario y juego**
+**Inventory and Gameplay**
 
 * GET `/api/inventory/`
 * POST `/api/capture/`
 * POST `/api/inventory/{id}/sell/`
 * GET `/api/dex/`
 
-**Store y zonas**
+**Store and Zones**
 
 * GET `/api/store/items/`
 * POST `/api/store/buy/`
@@ -127,41 +127,41 @@ Las apps representan dominios y casos de uso, no pantallas ni CRUD genéricos.
 
 ---
 
-## API y documentación
+## API and Documentation
 
-* API REST con Django REST Framework
-* Documentación OpenAPI generada con **drf-spectacular**
-* Swagger UI para exploración y pruebas manuales
+* REST API built with Django REST Framework
+* OpenAPI documentation generated with **drf-spectacular**
+* Swagger UI for exploration and manual testing
 
 ---
 
 ## Testing
 
-Testing automatizado con **pytest**:
+Automated testing with **pytest**:
 
-* modelos
+* models
 * serializers
 * endpoints
-* lógica de dominio
+* domain logic
 
-Permite refactorización segura y control de regresiones.
+Enables safe refactoring and regression control.
 
 ---
 
-## Docker y entorno
+## Docker and Environment
 
-Proyecto completamente dockerizado.
+Fully dockerized project.
 
-Servicios:
+Services:
 
 * backend (Django + Gunicorn)
 * database (PostgreSQL)
 
-Incluye configuración de **Dev Container** para desarrollo consistente.
+Includes **Dev Container** configuration for consistent development.
 
 ---
 
-## Stack tecnológico
+## Tech Stack
 
 * Python
 * Django 5.0.6
@@ -174,6 +174,6 @@ Incluye configuración de **Dev Container** para desarrollo consistente.
 
 ---
 
-## Estado del proyecto
+## Project Status
 
-Proyecto en desarrollo activo. La base funcional y arquitectónica está definida y operativa, y el trabajo actual se centra en completar funcionalidades, refinar la lógica de dominio y consolidar el conjunto de endpoints manteniendo claridad, coherencia y mantenibilidad.
+Project under active development. The functional and architectural foundation is defined and operational. Current work focuses on completing features, refining domain logic, and consolidating the endpoint set while maintaining clarity, consistency, and maintainability.
