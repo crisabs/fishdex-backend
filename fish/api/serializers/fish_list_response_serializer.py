@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from typing import ClassVar
 
 
 class FishSerializer(serializers.Serializer):
@@ -15,6 +14,4 @@ class FishSerializer(serializers.Serializer):
 
 class FishListResponseSerializer(serializers.Serializer):
     success = serializers.BooleanField()
-    data: ClassVar[serializers.ListSerializer] = serializers.ListSerializer(
-        child=FishSerializer()
-    )
+    results = FishSerializer(many=True)
