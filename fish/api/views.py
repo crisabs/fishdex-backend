@@ -16,7 +16,7 @@ class FishListAPIView(GenericAPIView):
     @extend_schema(responses=FishListResponseSerializer(many=True))
     def get(self, request):
         result = get_fish_list()
-        payload = {"success": True, "data": result}
+        payload = {"success": True, "results": result}
 
         response_serializer = FishListResponseSerializer(data=payload)
         response_serializer.is_valid(raise_exception=True)
