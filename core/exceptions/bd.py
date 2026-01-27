@@ -9,3 +9,8 @@ class RepositoryError(AppException):
 class AccountAlreadyExistsError(AppException):
     default_code = "ACCOUNT_ALREADY_EXIST"
     default_message = "Account already exist"
+
+
+class FishesNotFoundInDatabase(AppException):
+    default_code = "NOT_FOUND_FISHES_IN_REPOSITORY"
+    default_message = "Not fishes were found in the database"
