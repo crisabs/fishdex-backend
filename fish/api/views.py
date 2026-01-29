@@ -1,3 +1,4 @@
+from venv import logger
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -58,7 +59,7 @@ class FishDetailsAPIView(GenericAPIView):
         description="Returns the details of a fish given its fish_id.",
     )
     def get(self, request):
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
         result = get_fish_details(serializer.validated_data["fish_id"])
