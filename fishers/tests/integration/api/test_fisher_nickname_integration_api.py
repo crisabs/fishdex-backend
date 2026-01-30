@@ -5,6 +5,8 @@ from rest_framework.test import APIClient
 from rest_framework import status
 from fishers.models import Fisher
 from rest_framework_simplejwt.tokens import RefreshToken
+from typing import Tuple
+from django.contrib.auth.models import AbstractBaseUser
 
 
 @pytest.fixture
@@ -13,7 +15,9 @@ def api_client():
 
 
 @pytest.fixture
-def authenticated_user(api_client, django_user_model):
+def authenticated_user(
+    api_client, django_user_model
+) -> Tuple[APIClient, AbstractBaseUser]:
     user = django_user_model.objects.create_user(
         username="user_jwttest1@user.com", password="user_jwttest1user_test1"
     )
@@ -28,7 +32,7 @@ def authenticated_user(api_client, django_user_model):
 
 
 def test_fisher_nickname_success(authenticated_user):
-    client, user = authenticated_user
+    client, _ = authenticated_user
     url = reverse("fishers:nickname")
     payload = {"nickname": "nickname"}
 
@@ -36,6 +40,4 @@ def test_fisher_nickname_success(authenticated_user):
 
     assert response.status_code == status.HTTP_200_OK
     assert response.data["success"] is True
-    assert (
-        response.data["message"] == "Fisher nickname updated to user_jwttest1@user.com"
-    )
+    assert response.data["message"] == "Fisher nickname updated to nickname"
