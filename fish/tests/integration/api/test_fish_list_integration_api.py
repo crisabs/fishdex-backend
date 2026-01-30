@@ -33,9 +33,10 @@ def test_fish_list_integration_api_success(authenticated_user):
     WHEN the user requests the fish list endpoint
     THEN the API returns a successful response including the created fish
     """
+    test_fish_id = 99
 
     Fish.objects.create(
-        fish_id=299,
+        fish_id=test_fish_id,
         name="Salmon_test",
         description="A strong migratory fish known for swimming upstream.",
         habitat="RIVER",
@@ -46,7 +47,7 @@ def test_fish_list_integration_api_success(authenticated_user):
 
     url = reverse("fish:get_list_fishes")
     client, _ = authenticated_user
-    response = client.get(url, format="json")
+    response = client.get(url)
     assert "success" in response.data
     assert "results" in response.data
 
@@ -60,6 +61,6 @@ def test_fish_list_integration_api_success(authenticated_user):
         None,
     )
     assert created_fish is not None
-    assert created_fish["fish_id"] == 299
+    assert created_fish["fish_id"] == test_fish_id
     assert created_fish["habitat"] == "RIVER"
     assert created_fish["rarity"] == "COMMON"
