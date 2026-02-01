@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     "accounts",
     "fishers",
     "fish",
+    "inventory",
 ]
 
 # --- Middleware ---

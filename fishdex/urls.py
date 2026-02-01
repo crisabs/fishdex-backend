@@ -30,6 +30,7 @@ urlpatterns = [
     # Domain Api Calls
     path("api/fishers/", include("fishers.api.urls")),
     path("api/fish/", include("fish.api.urls")),
+    path("api/inventory/", include("inventory.api.urls")),
     # Documentation
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
