@@ -1,42 +1,33 @@
+# production.py
 """
-Configuración específica para producción.
-Usada cuando DJANGO_ENV=production.
+Production settings for Fishdex project.
 """
 
-from .base import *  # noqa: F403, F401
-from .base import read_secret, LOGGING
 import os
+from . import base
 
-# --- Desactivar DEBUG ---
+# --- Copy all base uppercase settings into this module ---
+for setting_name in dir(base):
+    if setting_name.isupper():
+        globals()[setting_name] = getattr(base, setting_name)
+
+# --- Environment-specific overrides ---
 DEBUG = False
 os.environ["DJANGO_DEBUG"] = "False"
-# --- Seguridad ---
-# ⚠️ En producción, usa dominios específicos
 ALLOWED_HOSTS = ["yourdomain.com", "api.yourdomain.com"]
 
-# --- Base de datos (idéntica por ahora) ---
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": read_secret("pg_db"),
-        "USER": read_secret("pg_user"),
-        "PASSWORD": read_secret("pg_password"),
+        "NAME": base.read_secret("pg_db"),
+        "USER": base.read_secret("pg_user"),
+        "PASSWORD": base.read_secret("pg_password"),
         "HOST": "fishdex-postgres-db",
         "PORT": "5432",
     }
 }
 
-# --- Configuración extra futura ---
-# - Cache (Redis o Memcached)
-# - Logging avanzado
-# - Compresión y CDN para archivos estáticos
-# - Configuración de seguridad (SECURE_HSTS, CSRF_COOKIE_SECURE, etc.)
-
-# --- Logging específico para producción ---
-# Sobrescribimos para usar rotación de logs (archivos)
-LOGGING["handlers"]["console"]["formatter"] = "json"  # formato JSON para monitorización
-LOGGING["loggers"]["pokemon"]["handlers"] = ["console", "rotating_file"]
-LOGGING["loggers"]["pokemon"]["level"] = "INFO"
-LOGGING["loggers"]["django"]["level"] = "WARNING"  # Django solo errores o avisos
-LOGGING["root"]["handlers"] = ["console", "rotating_file"]
-LOGGING["root"]["level"] = "INFO"
+base.LOGGING["handlers"]["console"]["formatter"] = "json"
+base.LOGGING["root"]["handlers"] = ["console", "rotating_file"]
+base.LOGGING["root"]["level"] = "INFO"
+base.LOGGING["loggers"]["django"]["level"] = "WARNING"
