@@ -1,28 +1,27 @@
 """
-WSGI config for frontend project.
+WSGI config for Fishdex project.
 
-It exposes the WSGI callable as a module-level variable named ``application``.
+Exposes the WSGI callable as a module-level variable named `application`.
 
-For more information on this file, see
+For more information, see
 https://docs.djangoproject.com/en/5.0/howto/deployment/wsgi/
 """
 
 import os
-import logging
 import sys
-
+import logging
 
 from django.core.wsgi import get_wsgi_application
 
-# Configuración básica temprana para asegurar que stdout/stderr estén activos
+# Early logging setup to ensure stdout/stderr capture
 logging.basicConfig(
     level=logging.DEBUG,
     stream=sys.stdout,
     format="[%(levelname)s] %(asctime)s - %(name)s.%(funcName)s:%(lineno)d - %(message)s",
 )
 
+# Determine environment
 env = os.getenv("DJANGO_ENV", "development")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", f"fishdex.settings.{env}")
-
 
 application = get_wsgi_application()
