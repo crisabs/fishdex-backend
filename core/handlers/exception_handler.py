@@ -10,7 +10,11 @@ def custom_exception_handler(exc, context):
     if isinstance(exc, AppException):
         logger.exception(exc)
         return Response(
-            {"sucess": False, "code": exc.default_code, "message": exc.default_message},
+            {
+                "success": False,
+                "code": exc.default_code,
+                "message": exc.default_detail,
+            },
             status=exc.status_code,
         )
     response = drf_exception_handler(exc, context)

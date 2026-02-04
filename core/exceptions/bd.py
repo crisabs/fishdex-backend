@@ -3,14 +3,14 @@ from .base import AppException
 
 class RepositoryError(AppException):
     default_code = "REPOSITORY_ERROR"
-    default_message = "An unexpected database error ocurred."
+    default_detail = "An unexpected database error ocurred."
 
 
 class AccountAlreadyExistsError(AppException):
     default_code = "ACCOUNT_ALREADY_EXIST"
-    default_message = "Account already exist"
+    default_detail = "Account already exist"
 
 
 class FishesNotFoundInDatabase(AppException):
     default_code = "NOT_FOUND_FISHES_IN_REPOSITORY"
-    default_message = "Not fishes were found in the database"
+    default_detail = "Not fishes were found in the database"
