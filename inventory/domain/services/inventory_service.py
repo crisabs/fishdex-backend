@@ -3,7 +3,7 @@ from inventory.infrastructure.repositories.inventory_read_repository import (
     get_inventory_item_list_repository,
 )
 from core.exceptions.bd import RepositoryError
-from core.exceptions.domain import FisherNotEnoughCoinsError, FisherNotFoundError
+from core.exceptions.domain import FisherNotFoundError
 
 import logging
 
@@ -29,9 +29,6 @@ def get_inventory_item_list(user) -> list[Dict[str, Any]]:
         logger.exception(
             "No fisher profile associated with user while retrieving inventory items"
         )
-        raise
-    except FisherNotEnoughCoinsError:
-        logger.exception("Fisher has not enough coins for the purchase")
         raise
     except RepositoryError:
         logger.exception(
