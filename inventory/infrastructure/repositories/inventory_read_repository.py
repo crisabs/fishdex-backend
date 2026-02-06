@@ -2,31 +2,38 @@ from django.db import DatabaseError
 from core.exceptions.bd import RepositoryError
 from core.exceptions.domain import FisherNotFoundError
 from fishers.models import Fisher
+from inventory.models import FisherItem
 
-# TODO replace the dummy implementation
-_dummy_data = {
-    "store_items": [
-        {"name": "Basic Rod", "type": "ROD", "effect": 0.3, "price": 100},
-        {"name": "Basic Bait", "type": "BAIT", "effect": 0.3, "price": 100},
-        {"name": "Super Bait", "type": "BAIT", "effect": 0.3, "price": 400},
-    ],
-    "fishes": [
-        {
-            "name": "Salmon",
-            "fish_id": 1,
-            "description": "A strong migratory fish known for swimming upstream.",
-            "habitat": "RIVER",
-            "rarity": "COMMON",
-            "base_weight": 3.0,
-            "base_price": 15.0,
-        },
-    ],
-}
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def get_inventory_item_list_repository(user):
+    """
+    Retrieve the inventory items for the given user.
+
+    Returns a list of inventory entries containing items code, name and quantity.
+    Requires the user to have an associated Fisher profile.
+    """
     try:
-        return _dummy_data
+        fisher = Fisher.objects.get(user=user)
+        fisher_items = list(
+            FisherItem.objects.filter(fisher=fisher)
+            .select_related("item")
+            .values("item__code", "item__name", "quantity")
+        )
+
+        inventory = [
+            {
+                "item_code": item["item__code"],
+                "item_name": item["item__name"],
+                "quantity": item["quantity"],
+            }
+            for item in fisher_items
+        ]
+
+        return inventory
     except Fisher.DoesNotExist:
         raise FisherNotFoundError
     except DatabaseError as exc:
