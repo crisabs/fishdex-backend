@@ -32,6 +32,7 @@ urlpatterns = [
     path("api/fish/", include("fish.api.urls")),
     path("api/inventory/", include("inventory.api.urls")),
     path("api/store/", include("store.api.urls")),
+    path("api/capture/", include("capture.api.urls")),
     # Documentation
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
