@@ -44,6 +44,7 @@ def test_capture_fish_repository_success(user_with_fisher):
     assert fisherFish.length == 1
 
 
+@pytest.mark.django_db
 @patch(
     "capture.infrastructure.repositories.capture_write_repository.Fisher.objects.get"
 )
@@ -62,6 +63,7 @@ def test_capture_fish_repository_raises_fisher_not_found_error(
         )
 
 
+@pytest.mark.django_db
 @patch("capture.infrastructure.repositories.capture_write_repository.Fish.objects.get")
 def test_capture_fish_repository_raises_fishes_not_found_in_database(
     mock_fish, user_with_fisher
@@ -78,6 +80,7 @@ def test_capture_fish_repository_raises_fishes_not_found_in_database(
         )
 
 
+@pytest.mark.django_db
 @patch("capture.infrastructure.repositories.capture_write_repository.FisherFish.save")
 def test_capture_fish_repository_raises_repository_error(
     mock_fisher_fish, user_with_fisher
