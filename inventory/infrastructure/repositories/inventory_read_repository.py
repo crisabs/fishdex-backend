@@ -2,8 +2,7 @@ from django.db import DatabaseError
 from core.exceptions.bd import RepositoryError
 from core.exceptions.domain import FisherNotFoundError
 from fishers.models import Fisher
-from inventory.models import FisherItem
-
+from inventory.models import FisherFish, FisherItem
 import logging
 
 logger = logging.getLogger(__name__)
@@ -34,6 +33,33 @@ def get_inventory_item_list_repository(user):
         ]
 
         return inventory
+    except Fisher.DoesNotExist:
+        raise FisherNotFoundError
+    except DatabaseError as exc:
+        raise RepositoryError from exc
+
+
+def get_inventory_fish_list_repository(user):
+    """
+    Retrieve the inventory fishes for the given user.
+
+    Returns a list of inventory entries containing
+    fish name, base_price, weight, caught_at and rarity.
+    Requires the user to have an associated Fisher profile.
+    """
+    try:
+        fisher = Fisher.objects.get(user=user)
+        return list(
+            FisherFish.objects.filter(fisher=fisher)
+            .select_related("fish")
+            .values(
+                "fish__name",
+                "fish__base_price",
+                "weight",
+                "caught_at",
+                "fish__rarity",
+            )
+        )
     except Fisher.DoesNotExist:
         raise FisherNotFoundError
     except DatabaseError as exc:
