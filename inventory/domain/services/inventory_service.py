@@ -57,16 +57,18 @@ def get_inventory_fish_list(user) -> list[Dict[str, Any]]:
         fishes_list = get_inventory_fish_list_repository(user=user)
         inventory = []
 
-        for fish in fishes_list:
-            price = floor(Decimal(fish["fish__base_price"]) * (fish["weight"]))
+        for fisherFish in fishes_list:
+            price = floor(
+                Decimal(fisherFish["fish__base_price"]) * Decimal(fisherFish["weight"])
+            )
 
             inventory.append(
                 {
-                    "fish_name": fish["fish__name"],
+                    "fish_name": fisherFish["fish__name"],
                     "price": price,
-                    "weight": fish["weight"],
-                    "caught_at": fish["caught_at"],
-                    "rarity": fish["fish__rarity"],
+                    "weight": fisherFish["weight"],
+                    "caught_at": fisherFish["caught_at"],
+                    "rarity": fisherFish["fish__rarity"],
                 }
             )
         return inventory
