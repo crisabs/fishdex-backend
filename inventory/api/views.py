@@ -69,7 +69,7 @@ class InventoryFishListView(GenericAPIView):
         result = get_inventory_fish_list(user=request.user)
         payload = {"success": True, "result": result}
 
-        response_serializer = InventoryFishListResponseSerializer(data=payload)
-        response_serializer.is_valid(raise_exception=True)
+        response_serializer = InventoryFishListResponseSerializer(payload)
+        # response_serializer.is_valid(raise_exception=True)
 
-        return Response(response_serializer.validated_data, status=status.HTTP_200_OK)
+        return Response(response_serializer.data, status=status.HTTP_200_OK)
