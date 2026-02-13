@@ -26,6 +26,8 @@ def user_with_items(django_user_model):
     return user
 
 
+@pytest.mark.integration
+@pytest.mark.django_db
 def test_get_inventory_item_list_repository_returns_data(user_with_items):
     """
     GIVEN a user with a fisher and purchased items
