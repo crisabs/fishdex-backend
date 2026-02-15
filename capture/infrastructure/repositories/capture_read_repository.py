@@ -45,5 +45,8 @@ def get_list_fishes_by_habitat_repository(habitat):
 
 
 def get_fisher_zone_repository(user):
-    fisher = Fisher.objects.get(user=user)
-    return Habitat[fisher.current_zone.upper()].value
+    try:
+        fisher = Fisher.objects.get(user=user)
+        return Habitat[fisher.current_zone.upper()].value
+    except Fisher.DoesNotExist as exc:
+        raise FisherNotFoundError from exc
