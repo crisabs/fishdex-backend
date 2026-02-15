@@ -7,9 +7,13 @@ from capture.infrastructure.repositories.capture_write_repository import (
 )
 from capture.infrastructure.repositories.capture_read_repository import (
     get_item_effect,
+    get_list_fishes_by_habitat_repository,
+    get_fisher_zone_repository,
 )
 import logging
 import random
+
+from fishers.tests.unit.services.test_fishers_service import user
 
 logger = logging.getLogger(__name__)
 
@@ -53,4 +57,45 @@ def capture_fish_service(
     except FisherNotFoundError:
         raise
     except RepositoryError:
+        raise
+
+
+def get_spawned_fish(user=user):
+    """
+    Returns a randomly spawned fish for the given user bases
+    on the fisher's current zone.
+
+    Fish rarity is selected using weighted probabilities, priorizing the chosen rarity
+    and falling bck to any available fish when necessary.
+
+    Raises:
+        FisherNotFoundError: If the user has no associated fisher profile.
+        NoFishAvailableError: If no fish are available for the fisher's zone.
+    """
+    try:
+        fisher_zone = get_fisher_zone_repository(user=user)
+
+        RARITY_WEIGHTS = {
+            "COMMON": 70,
+            "RARE": 25,
+            "LEGENDARY": 5,
+        }
+
+        selected_rarity = random.choices(
+            population=list(RARITY_WEIGHTS.keys()),
+            weights=list(RARITY_WEIGHTS.values()),
+            k=1,
+        )[0]
+
+        fishes = get_list_fishes_by_habitat_repository(habitat=fisher_zone)
+
+        fishes_by_rarity = {"COMMON": [], "RARE": [], "LEGENDARY": []}
+        for fish in fishes:
+            fishes_by_rarity[fish["rarity"]].append(fish)
+
+        if fishes_by_rarity[selected_rarity]:
+            return random.choice(fishes_by_rarity[selected_rarity])["fish_id"]
+
+        return random.choice(fishes)["fish_id"]
+    except FisherNotFoundError:
         raise
