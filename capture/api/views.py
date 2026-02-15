@@ -19,9 +19,6 @@ from capture.domain.services.capture_fish_service import get_spawned_fish
 from capture.api.serializers.capture_spawned_fish_request_serializer import (
     CaptureSpawnedFishRequestSerializer,
 )
-from capture.api.serializers.capture_fish_response_serializer import (
-    CaptureFishResponseSerializer,
-)
 
 
 class CaptureFishAPIView(GenericAPIView):
