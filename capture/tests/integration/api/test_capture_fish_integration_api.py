@@ -3,7 +3,6 @@ from rest_framework import status
 from django.urls import reverse
 from rest_framework_simplejwt.tokens import RefreshToken
 from typing import cast
-from fish import api
 from fishers.models import Fisher
 import pytest
 

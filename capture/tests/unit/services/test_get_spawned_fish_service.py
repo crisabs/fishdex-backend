@@ -32,9 +32,9 @@ def test_get_spawned_fish_service_returns_data(mock_service, user_with_fisher):
     WHEN the get_spawned_fish service is called for that user
     THEN it returns a fish id from the provided list according to rarity weighting
     """
-    mock_service.return_value = [{"fish_id": "Catfish", "rarity": "COMMON"}]
+    mock_service.return_value = [{"fish_id": "1", "rarity": "COMMON"}]
     result = get_spawned_fish(user=user_with_fisher)
-    assert result in ("Salmon", "Trout", "Catfish", "Catfish", "Pike", "Sturgeon")
+    assert result in ("1", "2", "3", "4", "5", "6")
 
 
 @patch(

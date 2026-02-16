@@ -34,7 +34,7 @@ def get_list_fishes_by_habitat_repository(habitat):
         logger.info("fishes  %s", fishes)
         fishes_list = [
             {
-                "fish_id": fish.name,
+                "fish_id": fish.fish_id,
                 "rarity": fish.rarity,
             }
             for fish in fishes
