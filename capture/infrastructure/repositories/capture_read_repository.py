@@ -29,19 +29,16 @@ def get_item_effect(item_code):
 
 
 def get_list_fishes_by_habitat_repository(habitat):
-    try:
-        fishes = Fish.objects.filter(habitat=habitat)
-        logger.info("fishes  %s", fishes)
-        fishes_list = [
-            {
-                "fish_id": fish.fish_id,
-                "rarity": fish.rarity,
-            }
-            for fish in fishes
-        ]
-        return fishes_list
-    except Fisher.DoesNotExist as exc:
-        raise FisherNotFoundError from exc
+    fishes = Fish.objects.filter(habitat=habitat)
+    logger.info("fishes  %s", fishes)
+    fishes_list = [
+        {
+            "fish_id": fish.fish_id,
+            "rarity": fish.rarity,
+        }
+        for fish in fishes
+    ]
+    return fishes_list
 
 
 def get_fisher_zone_repository(user):
