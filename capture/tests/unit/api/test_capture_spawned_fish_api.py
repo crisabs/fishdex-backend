@@ -26,7 +26,7 @@ def test_capture_spawned_fish_api_return_data(mock_service, authenticated_user):
     WHEN the user requests the spawned fish capture endpoint
     THEN the API returns a successful response with the spawned fish data
     """
-    mock_service.return_value = "Salmon"
+    mock_service.return_value = 1
     client, _ = authenticated_user
     url = reverse("capture:spawned_fish")
     response = client.get(url)

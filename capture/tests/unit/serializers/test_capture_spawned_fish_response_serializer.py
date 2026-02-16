@@ -5,11 +5,11 @@ from typing import cast
 
 
 def test_capture_spawned_fish_response_serializer_success():
-    payload = {"success": True, "result": "Salmon"}
+    payload = {"success": True, "result": 1}
     serializer = CaptureSpawnedFishResponseSerializer(payload)
     data = cast(dict, serializer.data)
     assert data["success"] is True
-    assert data["result"] == "Salmon"
+    assert data["result"] == 1
 
 
 def test_capture_spawned_fish_response_serializer_error_requires_result():
