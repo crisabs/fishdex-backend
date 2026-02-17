@@ -2,7 +2,7 @@ from fishers.models import Fisher
 from django.db import DatabaseError
 from core.exceptions.bd import RepositoryError
 from core.exceptions.domain import (
-    FisherNotEnoughCoinsError,
+    NotEnoughCoinsError,
     FisherNotFoundError,
     ItemStoreNotFoundError,
 )
@@ -43,7 +43,7 @@ def buy_item_repository(user, item_code, quantity):
 
         total_price = item.price * quantity
         if total_price > fisher.coins:
-            raise FisherNotEnoughCoinsError()
+            raise NotEnoughCoinsError()
 
         with transaction.atomic():
             fisherItem, created = FisherItem.objects.update_or_create(

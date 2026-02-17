@@ -22,7 +22,19 @@ class ItemStoreNotFoundError(AppException):
     default_detail = "Item not found"
 
 
-class FisherNotEnoughCoinsError(AppException):
+class NotEnoughCoinsError(AppException):
     status_code = status.HTTP_409_CONFLICT
     default_code = "NOT_ENOUGH_COINS"
-    default_detail = "Not enough coins error for the current purchase"
+    default_detail = "Not enough coins"
+
+
+class ZoneAlreadySetError(AppException):
+    status_code = status.HTTP_409_CONFLICT
+    default_code = "ALREADY_IN_ZONE"
+    default_detail = "Fisher already in the zone"
+
+
+class InvalidZoneError(AppException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_code = "INVALID_ZONE"
+    default_detail = "Invalid zone"
