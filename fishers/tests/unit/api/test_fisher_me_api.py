@@ -44,7 +44,7 @@ def test_fisher_me_authenticated_user_returns_fisher_data(
     client, user = authenticated_user
 
     # WHEN
-    url = reverse("fishers:details-me")
+    url = reverse("fishers:details_me")
     response = client.get(url)
 
     # THEN
@@ -62,7 +62,7 @@ def test_fisher_me_user_not_authenticated(api_client):
     THEN returns 401 Unauthorized
     """
     # GIVEN / WHEN
-    url = reverse("fishers:details-me")
+    url = reverse("fishers:details_me")
     response = api_client.get(url)
 
     # THEN

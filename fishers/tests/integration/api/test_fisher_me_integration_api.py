@@ -48,7 +48,7 @@ def test_fisher_me_with_valid_jwt_returns_fisher_data(authenticated_user):
     # --- GIVEN ---
     client, user = authenticated_user
 
-    url = reverse("fishers:details-me")
+    url = reverse("fishers:details_me")
 
     # --- WHEN ---
     response = client.get(url)
