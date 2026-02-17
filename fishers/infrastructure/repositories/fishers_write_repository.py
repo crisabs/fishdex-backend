@@ -30,3 +30,17 @@ def set_fisher_nickname_repository(user, nickname) -> str:
         raise FisherNotFoundError
     except DatabaseError as exc:
         raise RepositoryError from exc
+
+
+def set_fisher_zone_repository(user, new_zone, zone_cost):
+    try:
+        fisher = Fisher.objects.get(user=user)
+        with transaction.atomic():
+            fisher.current_zone = new_zone
+            fisher.coins -= zone_cost
+            fisher.save()
+            return f"Fisher is now in the zone: {new_zone}"
+    except Fisher.DoesNotExist as exc:
+        raise FisherNotFoundError from exc
+    except DatabaseError as exc:
+        raise RepositoryError from exc
