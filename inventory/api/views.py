@@ -6,6 +6,7 @@ from drf_spectacular.utils import extend_schema
 from inventory.domain.services.inventory_service import (
     get_inventory_item_list,
     get_inventory_fish_list,
+    sell_fish,
 )
 from inventory.api.serializers.inventory_item_list_request_serializer import (
     InventoryItemListRequestSerializer,
@@ -18,6 +19,12 @@ from inventory.api.serializers.inventory_fish_list_request_serializer import (
 )
 from inventory.api.serializers.inventory_fish_list_response_serializer import (
     InventoryFishListResponseSerializer,
+)
+from inventory.api.serializers.inventory_fish_sell_request_serializer import (
+    InventoryFishSellRequestSerializer,
+)
+from inventory.api.serializers.inventory_fish_sell_response_serializer import (
+    InventoryFishSellResponseSerializer,
 )
 
 
@@ -70,6 +77,48 @@ class InventoryFishListView(GenericAPIView):
         payload = {"success": True, "result": result}
 
         response_serializer = InventoryFishListResponseSerializer(payload)
-        # response_serializer.is_valid(raise_exception=True)
 
+        return Response(response_serializer.data, status=status.HTTP_200_OK)
+
+
+class InventoryFishSellAPIView(GenericAPIView):
+    """
+    Sell a fish (or part of its weight) from the authenticated user's inventory.
+
+    This endpoint allows an authenticated user to sell a specific fish from their
+    inventory by providing the inventory record identifier, the fish identifier,
+    and the weight to be sold.
+
+    Permissions:
+        - Authenticated users only.
+
+    Request body:
+        - pk (int): Inventory record identifier.
+        - fish_id (int): Identifier of the fish to be sold.
+        - total_weight (float): Weight of the fish to sell.
+
+    Responses:
+        - 200 OK: Fish sale successfully processed.
+        - 400 Bad Request: Invalid input data.
+        - 401 Unauthorized: Authentication credentials were not provided or are invalid.
+    """
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = InventoryFishSellRequestSerializer
+    extend_schema(
+        request=InventoryFishSellRequestSerializer,
+        responses=InventoryFishSellResponseSerializer,
+    )
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        response = sell_fish(
+            user=request.user,
+            pk=serializer.validated_data["pk"],
+            fish_id=serializer.validated_data["fish_id"],
+            total_weight=serializer.validated_data["total_weight"],
+        )
+        response_serializer = InventoryFishSellResponseSerializer(response)
         return Response(response_serializer.data, status=status.HTTP_200_OK)

@@ -17,6 +17,18 @@ class FisherNotFoundError(AppException):
     default_detail = "The authenticated user has no fisher profile."
 
 
+class FisherFishNotFoundError(AppException):
+    default_code = "FISHER_FISH_NOT_FOUND"
+    default_detail = (
+        "The authenticated user has no fish associated according to the request"
+    )
+
+
+class FishNotFoundError(AppException):
+    default_code = "FISH_NOT_FOUND"
+    default_detail = "Fish not found"
+
+
 class ItemStoreNotFoundError(AppException):
     default_code = "ITEM_NOT_FOUND"
     default_detail = "Item not found"
