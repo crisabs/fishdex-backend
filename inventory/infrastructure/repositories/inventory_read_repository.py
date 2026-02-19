@@ -1,7 +1,8 @@
 from django.db import DatabaseError
 from core.exceptions.bd import RepositoryError
-from core.exceptions.domain import FisherNotFoundError
+from core.exceptions.domain import FishNotFoundError, FisherNotFoundError
 from fishers.models import Fisher
+from fish.models import Fish
 from inventory.models import FisherFish, FisherItem
 import logging
 
@@ -64,3 +65,28 @@ def get_inventory_fish_list_repository(user):
         raise FisherNotFoundError
     except DatabaseError as exc:
         raise RepositoryError from exc
+
+
+def get_price_fish_to_sell(fish_id, total_weight):
+    """
+    Calculate the sale price of a fish based on its weight.
+
+    Retrieves the fish by its identifier and computes the total price
+    using its base price and the provided weight.
+
+    Args:
+        fish_id (int): Identifier of the fish.
+        total_weight (float): Weight of the fish to sell.
+
+    Returns:
+        Decimal | float: Total sale price.
+
+    Raises:
+        FishNotFoundError: If the fish does not exist.
+    """
+
+    try:
+        fish = Fish.objects.get(fish_id=fish_id)
+        return fish.base_price * total_weight
+    except Fish.DoesNotExist as exc:
+        raise FishNotFoundError from exc

@@ -5,7 +5,15 @@ from inventory.models import FisherFish, FisherItem
 
 @admin.register(FisherFish)
 class FisherFishAdmin(admin.ModelAdmin):
-    list_display = ("fisher", "fish", "caught_at", "weight", "length", "description")
+    list_display = (
+        "fisher",
+        "fish",
+        "pk",
+        "caught_at",
+        "weight",
+        "length",
+        "description",
+    )
     list_filter = ("weight", "caught_at")
     search_fields = ("fisher__nickname",)
     readonly_fields = ("fisher",)
