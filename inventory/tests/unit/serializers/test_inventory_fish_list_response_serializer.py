@@ -15,6 +15,7 @@ def test_inventory_fish_list_response_serializer_success():
             {
                 "fish_name": "Salmon",
                 "price": 4,
+                "pk": 1,
                 "weight": "0.30",
                 "caught_at": "2026-02-10T05:52:57.267600Z",
                 "rarity": "COMMON",
@@ -28,6 +29,7 @@ def test_inventory_fish_list_response_serializer_success():
     assert serializer_data["result"][0] == {
         "fish_name": "Salmon",
         "price": 4,
+        "pk": 1,
         "weight": "0.30",
         "caught_at": "2026-02-10T05:52:57.267600Z",
         "rarity": "COMMON",

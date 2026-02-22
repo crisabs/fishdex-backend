@@ -69,6 +69,7 @@ def get_inventory_fish_list(user) -> list[Dict[str, Any]]:
                 {
                     "fish_name": fisherFish["fish__name"],
                     "price": price,
+                    "pk": fisherFish["pk"],
                     "weight": fisherFish["weight"],
                     "caught_at": fisherFish["caught_at"],
                     "rarity": fisherFish["fish__rarity"],

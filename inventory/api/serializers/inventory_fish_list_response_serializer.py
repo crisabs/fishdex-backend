@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 
 class _InventoryFishResponseSerializer(serializers.Serializer):
+    pk = serializers.IntegerField(min_value=1)
     fish_name = serializers.CharField()
     price = serializers.IntegerField()
     weight = serializers.DecimalField(decimal_places=2, max_digits=8)
