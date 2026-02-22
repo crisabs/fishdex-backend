@@ -24,3 +24,35 @@ def sell_fish_repository(user, pk, total_price):
         raise FisherFishNotFoundError from exc
     except DatabaseError as exc:
         raise RepositoryError from exc
+
+
+def set_description_fisher_fish_repository(user, pk, description):
+    """
+    Set the description for a fisher fish inventory record.
+    This function retrieves the fisher associated with the given user and the fisher fish
+    inventory record identified by the primary key (pk).
+    It then updates the description of the fisher fish
+    and saves the changes within a database transaction.
+    The function handles potential exceptions that
+    may arise during the database operations,
+    such as the fisher or fisher fish not being found, or any database-level errors.
+    It logs the exceptions and raises appropriate custom exceptions
+    to indicate the nature of the failure.
+    """
+
+    try:
+        fisher = Fisher.objects.get(user=user)
+        fisherFish = FisherFish.objects.get(fisher=fisher, pk=pk)
+
+        with transaction.atomic():
+            fisherFish.description = description
+            fisherFish.save()
+
+            return {"success": True}
+
+    except Fisher.DoesNotExist as exc:
+        raise FisherNotFoundError from exc
+    except FisherFish.DoesNotExist as exc:
+        raise FisherFishNotFoundError from exc
+    except DatabaseError as exc:
+        raise RepositoryError from exc
