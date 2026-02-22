@@ -10,6 +10,4 @@ class InventoryFisherFishDescriptionRequestSerializer(serializers.Serializer):
     """
 
     pk = serializers.IntegerField(min_value=1)
-    description = serializers.CharField(
-        max_length=255, required=False, allow_blank=True
-    )
+    description = serializers.CharField(max_length=255)
