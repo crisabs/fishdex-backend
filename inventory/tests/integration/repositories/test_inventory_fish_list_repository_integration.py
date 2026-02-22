@@ -46,6 +46,7 @@ def test_inventory_fish_list_repository_success_integration(user_with_fisher):
     result = get_inventory_fish_list_repository(user=user)
 
     assert result[0]["fish__name"] == "Salmon"
+    assert result[0]["pk"] == 1
     assert result[0]["fish__base_price"] == 15
     assert result[0]["fish__rarity"] == "COMMON"
     assert result[0]["weight"] == Decimal("1.00")

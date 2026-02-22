@@ -42,6 +42,7 @@ def test_intentory_fish_list_api_returns_data(mock_service, authenticated_user):
         {
             "fish_name": "Salmon",
             "price": 4,
+            "pk": 1,
             "weight": "0.30",
             "caught_at": "2026-02-10T05:52:57.267600Z",
             "rarity": "COMMON",

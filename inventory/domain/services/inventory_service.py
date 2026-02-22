@@ -10,6 +10,7 @@ from core.exceptions.domain import FisherNotFoundError
 from math import floor
 from inventory.infrastructure.repositories.inventory_write_repository import (
     sell_fish_repository,
+    set_description_fisher_fish_repository,
 )
 import logging
 
@@ -69,6 +70,7 @@ def get_inventory_fish_list(user) -> list[Dict[str, Any]]:
                 {
                     "fish_name": fisherFish["fish__name"],
                     "price": price,
+                    "pk": fisherFish["pk"],
                     "weight": fisherFish["weight"],
                     "caught_at": fisherFish["caught_at"],
                     "rarity": fisherFish["fish__rarity"],
@@ -138,6 +140,37 @@ def sell_fish(user, pk, fish_id, total_weight):
             user=user,
             pk=pk,
             total_price=total_price,
+        )
+        return result
+
+    except FisherNotFoundError:
+        logger.exception("Repository failure while retrieving fisher data")
+        raise
+    except RepositoryError:
+        logger.exception("Repository failure while retrieving fisher fish data")
+        raise
+
+
+def set_description_fisher_fish(user, pk, description):
+    """
+    Set the description for a fisher fish inventory record.
+
+    Args:
+        user (User): The user associated with the fisher.
+        pk (int): Primary key of the fisher fish inventory record.
+        description (str): The description to set for the fisher fish.
+    Returns:
+        dict: A dictionary indicating a successful operation. Example: {"success": True}
+    Raises:
+        FisherNotFoundError: If no fisher exists for the given user.
+        FisherFishNotFoundError: If the inventory record does not exist.
+        RepositoryError: If a database-level error occurs during the operation.
+    """
+    try:
+        result = set_description_fisher_fish_repository(
+            user=user,
+            pk=pk,
+            description=description,
         )
         return result
 

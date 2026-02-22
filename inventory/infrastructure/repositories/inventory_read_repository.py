@@ -57,6 +57,7 @@ def get_inventory_fish_list_repository(user):
                 "fish__name",
                 "fish__base_price",
                 "weight",
+                "pk",
                 "caught_at",
                 "fish__rarity",
             )
