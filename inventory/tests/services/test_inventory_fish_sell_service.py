@@ -7,8 +7,7 @@ from unittest.mock import patch
 
 
 @pytest.fixture
-@pytest.mark.django_db
-def user(django_user_model):
+def user(db, django_user_model):
     return django_user_model.objects.create_user(
         username="user_test@user.com", password="user_test"
     )
@@ -24,7 +23,6 @@ def sell_fish_params():
     }
 
 
-@pytest.mark.django_db
 class TestSellFishSuccess:
     """Test cases for successful sell_fish operations."""
 
@@ -136,7 +134,6 @@ class TestSellFishSuccess:
             assert result == {"code": "OK"}
 
 
-@pytest.mark.django_db
 class TestSellFishErrors:
     """Test cases for sell_fish error handling."""
 

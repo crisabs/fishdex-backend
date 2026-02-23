@@ -9,18 +9,17 @@ from inventory.domain.services.inventory_service import (
 
 
 @pytest.fixture
-def user(django_user_model):
+def user(db, django_user_model):
     return django_user_model.objects.create_user(
         username="testuser", password="testpassword"
     )
 
 
-@pytest.mark.django_db
-@patch(
-    "inventory.domain.services.inventory_service.set_description_fisher_fish_repository"
-)
 class TestInventoryFisherFishDescriptionServiceSuccess:
 
+    @patch(
+        "inventory.domain.services.inventory_service.set_description_fisher_fish_repository"
+    )
     def test_set_description_fisher_fish_success_returns_data(self, mocker, user):
         mocker.return_value = {"success": True}
 
@@ -32,7 +31,6 @@ class TestInventoryFisherFishDescriptionServiceSuccess:
         assert response == {"success": True}
 
 
-@pytest.mark.django_db
 class TestInventoryFisherFishDescriptionServiceErrorHandling:
 
     @patch(

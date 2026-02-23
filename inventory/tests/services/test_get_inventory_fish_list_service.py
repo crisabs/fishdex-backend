@@ -1,3 +1,4 @@
+from django.utils import timezone
 from core.exceptions.bd import RepositoryError
 from core.exceptions.domain import FisherNotFoundError
 from fishers.models import Fisher
@@ -7,8 +8,7 @@ import pytest
 
 
 @pytest.fixture
-@pytest.mark.django_db
-def user_with_fisher_profile(django_user_model):
+def user_with_fisher_profile(db, django_user_model):
     user = django_user_model.objects.create_user(
         username="user_test@test.com", password="user_test"
     )
@@ -17,14 +17,12 @@ def user_with_fisher_profile(django_user_model):
 
 
 @pytest.fixture
-@pytest.mark.django_db
-def user_without_fisher_profile(django_user_model):
+def user_without_fisher_profile(db, django_user_model):
     return django_user_model.objects.create_user(
         username="user_test@test.com", password="user_test"
     )
 
 
-@pytest.mark.django_db
 class TestGetInventoryFishListServiceSuccess:
 
     @patch(
@@ -34,17 +32,20 @@ class TestGetInventoryFishListServiceSuccess:
         self, mock_repository, user_with_fisher_profile
     ):
         """
-        GIVEN a user with fisher profile
+        GIVEN a user with a fisher profile
         AND a mocked repository returning a list of fishes
         WHEN get_inventory_fish_list is called
-        THEN it should return a list of fishes with calculated price and expected fields
+        THEN it should return the expected list of fishes with correct data
         """
+
+        caught_at = timezone.now()
         mock_repository.return_value = [
             {
                 "fish__name": "Salmon",
                 "fish__base_price": 15,
+                "pk": 1,
                 "weight": 0.3,
-                "caught_at": "2026-02-10T05:52:57.267600Z",
+                "caught_at": caught_at,
                 "fish__rarity": "COMMON",
             },
         ]
@@ -53,16 +54,17 @@ class TestGetInventoryFishListServiceSuccess:
             {
                 "fish_name": "Salmon",
                 "price": 4,
+                "pk": 1,
                 "weight": 0.3,
-                "caught_at": "2026-02-10T05:52:57.267600Z",
+                "caught_at": caught_at,
                 "rarity": "COMMON",
             }
         ]
         result = get_inventory_fish_list(user=user_with_fisher_profile)
         assert result == expected_result
+        assert result[0]["caught_at"] is caught_at
 
 
-@pytest.mark.django_db
 class TestGetInventoryFishListServiceErrors:
     @patch(
         "inventory.domain.services.inventory_service.get_inventory_fish_list_repository"
