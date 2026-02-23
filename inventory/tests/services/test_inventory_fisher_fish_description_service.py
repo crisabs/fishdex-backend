@@ -3,7 +3,6 @@ from unittest.mock import patch
 import pytest
 from core.exceptions.bd import RepositoryError
 from core.exceptions.domain import FisherNotFoundError
-from fishers.models import Fisher
 from inventory.domain.services.inventory_service import (
     set_description_fisher_fish,
 )
@@ -16,6 +15,7 @@ def user(django_user_model):
     )
 
 
+@pytest.mark.django_db
 @patch(
     "inventory.domain.services.inventory_service.set_description_fisher_fish_repository"
 )
@@ -32,6 +32,7 @@ class TestInventoryFisherFishDescriptionServiceSuccess:
         assert response == {"success": True}
 
 
+@pytest.mark.django_db
 class TestInventoryFisherFishDescriptionServiceErrorHandling:
 
     @patch(
