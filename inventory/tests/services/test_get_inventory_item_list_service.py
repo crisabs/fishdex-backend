@@ -6,14 +6,12 @@ from unittest.mock import patch
 
 
 @pytest.fixture
-@pytest.mark.django_db
-def user(django_user_model):
+def user(db, django_user_model):
     return django_user_model.objects.create_user(
         username="user_test@user.com", password="user_test"
     )
 
 
-@pytest.mark.django_db
 class TestGetInventoryItemListServiceSuccess:
     @patch(
         "inventory.domain.services.inventory_service.get_inventory_item_list_repository"
@@ -32,13 +30,12 @@ class TestGetInventoryItemListServiceSuccess:
         assert result == mock_repository.return_value
 
 
-@pytest.mark.django_db
 class TestGetInventoryItemListServiceErrors:
     @patch(
         "inventory.domain.services.inventory_service.get_inventory_item_list_repository"
     )
     def test_get_inventory_item_list_service_raises_fisher_not_found_error(
-        mock_repository, user
+        self, mock_repository, user
     ):
         """
         GIVEN a valid user and the repository raises a FisherNotFoundError
@@ -54,7 +51,7 @@ class TestGetInventoryItemListServiceErrors:
         "inventory.domain.services.inventory_service.get_inventory_item_list_repository"
     )
     def test_get_inventory_item_list_service_raises_repository_error(
-        mock_repository, user
+        self, mock_repository, user
     ):
         """
         GIVEN a valid user and the repository raises a RepositoryError
