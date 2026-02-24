@@ -3,12 +3,14 @@ from core.exceptions.bd import RepositoryError
 from core.exceptions.domain import FisherNotFoundError
 from inventory.domain.services.inventory_service import get_inventory_item_list
 from unittest.mock import patch
+from inventory.tests.factories.user_factory import build_test_email, build_test_password
 
 
 @pytest.fixture
 def user(db, django_user_model):
+
     return django_user_model.objects.create_user(
-        username="user_test@user.com", password="user_test"
+        username=build_test_email, password=build_test_password
     )
 
 

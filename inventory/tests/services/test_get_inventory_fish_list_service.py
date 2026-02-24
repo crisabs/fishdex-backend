@@ -5,21 +5,22 @@ from fishers.models import Fisher
 from inventory.domain.services.inventory_service import get_inventory_fish_list
 from unittest.mock import patch
 import pytest
+from inventory.tests.factories.user_factory import build_test_email, build_test_password
 
 
 @pytest.fixture
 def user_with_fisher_profile(db, django_user_model):
     user = django_user_model.objects.create_user(
-        username="user_test@test.com", password="user_test"
+        username=build_test_email, password=build_test_password
     )
-    Fisher.objects.create(user=user, nickname=user)
+    Fisher.objects.create(user=user, nickname=user.username)
     return user
 
 
 @pytest.fixture
 def user_without_fisher_profile(db, django_user_model):
     return django_user_model.objects.create_user(
-        username="user_test@test.com", password="user_test"
+        username=build_test_email, password=build_test_password
     )
 
 
