@@ -6,12 +6,13 @@ from core.exceptions.domain import FisherNotFoundError
 from inventory.domain.services.inventory_service import (
     set_description_fisher_fish,
 )
+from inventory.tests.factories.user_factory import build_test_email, build_test_password
 
 
 @pytest.fixture
 def user(db, django_user_model):
     return django_user_model.objects.create_user(
-        username="testuser", password="testpassword"
+        username=build_test_email, password=build_test_password
     )
 
 
