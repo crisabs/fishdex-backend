@@ -8,10 +8,13 @@ from django.db import transaction
 
 def sell_fish_repository(user, pk, total_price):
     try:
-        fisher = Fisher.objects.get(user=user)
-        fisherFish = FisherFish.objects.get(fisher=fisher, pk=pk)
-
         with transaction.atomic():
+            fisher = Fisher.objects.select_for_update().get(user=user)
+
+            fisherFish = FisherFish.objects.select_for_update().get(
+                fisher=fisher, pk=pk
+            )
+
             fisherFish.delete()
             fisher.coins += total_price
             fisher.save()
