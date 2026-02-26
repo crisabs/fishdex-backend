@@ -1,9 +1,13 @@
-import uuid
+import factory
+from factory.faker import Faker
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
-def build_test_email():
-    return f"user_{uuid.uuid4().hex}@test.com"
+class UserFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = User
 
-
-def build_test_password():
-    return "Str0ngP@assw0rd!"
+    username = Faker("email")
+    password = factory.django.Password("Str0ngP4ssWord!")
