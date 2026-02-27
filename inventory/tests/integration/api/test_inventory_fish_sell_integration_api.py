@@ -3,14 +3,10 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 import pytest
 from typing import cast
-from fishers.models import Fisher
-from inventory.models import FisherFish
-from fish.models import Fish
 from django.urls import reverse
 
-import logging
-
-logger = logging.getLogger(__name__)
+from inventory.tests.factories.fisher_factory import FisherFactory
+from inventory.tests.factories.fisher_fish_factory import FisherFishFactory
 
 
 @pytest.fixture
@@ -19,30 +15,24 @@ def api_client():
 
 
 @pytest.fixture
-def authenticated_user_with_fisher_and_fill_to_sell(django_user_model, api_client):
-    """Fixture to create an authenticated user with
-    a fisher and a fish in their inventory for testing the fish selling API endpoint."""
-    user = django_user_model.objects.create_user(
-        username="testuser@user.com", password="testuser"
-    )
-    refresh = cast(RefreshToken, RefreshToken.for_user(user=user))
+def authenticated_user_with_fisher_and_fisher_fish_to_sell(db, api_client):
+    """
+    Fixture to create an authenticated user with
+    a fisher and a fish in their inventory for testing the fish selling API endpoint.
+    """
+    fisher = FisherFactory()
+    fisherFish = FisherFishFactory(fisher=fisher)
+
+    refresh = cast(RefreshToken, RefreshToken.for_user(user=fisher.user))
     access_token = str(refresh.access_token)
     api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
 
-    fisher = Fisher.objects.create(user=user, nickname=user)
-    fish = Fish.objects.get(fish_id=1)
-
-    fisher_fish = FisherFish.objects.create(
-        fisher=fisher, fish=fish, weight=12.1, length=1
-    )
-
-    return api_client, user, fisher, fisher_fish
+    return api_client, fisher.user, fisherFish
 
 
 class TestSellFishIntegrationSuccess:
-    @pytest.mark.django_db
     def test_inventory_fish_sell_integration_ok_response(
-        self, authenticated_user_with_fisher_and_fill_to_sell
+        self, authenticated_user_with_fisher_and_fisher_fish_to_sell
     ):
         """
         GIVEN an authenticated user with a fisher and a fish in their inventory
@@ -51,21 +41,12 @@ class TestSellFishIntegrationSuccess:
         and the user's inventory was updated accordingly.
         """
         url = reverse("inventory:fish_sell")
-        client, _, fisher, fisher_fish = authenticated_user_with_fisher_and_fill_to_sell
-
-        pk = fisher_fish.pk
-        fish_id = (
-            FisherFish.objects.filter(fisher=fisher)
-            .select_related("fish")
-            .values_list("fish__fish_id", flat=True)
-            .first()
-        )
-        weight = fisher_fish.weight
+        client, _, fisherFish = authenticated_user_with_fisher_and_fisher_fish_to_sell
 
         payload = {
-            "pk": pk,
-            "fish_id": fish_id,
-            "total_weight": weight,
+            "pk": fisherFish.pk,
+            "fish_id": fisherFish.fish.fish_id,
+            "total_weight": fisherFish.weight,
         }
 
         response = client.post(url, payload, format="json")
@@ -91,3 +72,76 @@ class TestSellFishIntegrationErrors:
         }
         response = api_client.post(url, payload, format="json")
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_inventory_fish_sell_integration_api_missing_weight(
+        self, authenticated_user_with_fisher_and_fisher_fish_to_sell
+    ):
+        url = reverse("inventory:fish_sell")
+        payload = {
+            "pk": 1,
+            "fish_id": 1,
+        }
+        api_client, _, _ = authenticated_user_with_fisher_and_fisher_fish_to_sell
+        response = api_client.post(url, payload, format="json")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_inventory_fish_sell_integration_api_missing_fish_id(
+        self, authenticated_user_with_fisher_and_fisher_fish_to_sell
+    ):
+        url = reverse("inventory:fish_sell")
+        payload = {
+            "pk": 1,
+            "total_weight": 12.1,
+        }
+        api_client, _, _ = authenticated_user_with_fisher_and_fisher_fish_to_sell
+        response = api_client.post(url, payload, format="json")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_inventory_fish_sell_integration_api_missing_fish_pk(
+        self, authenticated_user_with_fisher_and_fisher_fish_to_sell
+    ):
+        url = reverse("inventory:fish_sell")
+        payload = {
+            "fish_id": 1,
+            "total_weight": 12.1,
+        }
+        api_client, _, _ = authenticated_user_with_fisher_and_fisher_fish_to_sell
+        response = api_client.post(url, payload, format="json")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_inventory_fish_sell_integration_api_invalid_fish_id(
+        self, authenticated_user_with_fisher_and_fisher_fish_to_sell
+    ):
+        """
+        GIVEN an authenticated user with a fisher and a fish in their inventory
+        WHEN the user attempts to sell a fish with an invalid fish_id through the inventory API
+        THEN the API should return an error response
+        indicating that the specified fish could not be found."""
+        url = reverse("inventory:fish_sell")
+        payload = {
+            "pk": 1,
+            "fish_id": -1,
+            "total_weight": 12.1,
+        }
+        api_client, _, _ = authenticated_user_with_fisher_and_fisher_fish_to_sell
+        response = api_client.post(url, payload, format="json")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_inventory_fish_sell_integration_api_invalid_pk(
+        self, authenticated_user_with_fisher_and_fisher_fish_to_sell
+    ):
+        """
+        GIVEN an authenticated user with a fisher and a fish in their inventory
+        WHEN the user attempts to sell a fish with an invalid pk through the inventory API
+        THEN the API should return an error response
+        indicating that the specified fish could not be found.
+        """
+        url = reverse("inventory:fish_sell")
+        payload = {
+            "pk": 999,
+            "fish_id": 1,
+            "total_weight": 12.1,
+        }
+        api_client, _, _ = authenticated_user_with_fisher_and_fisher_fish_to_sell
+        response = api_client.post(url, payload, format="json")
+        assert response.status_code == status.HTTP_404_NOT_FOUND
