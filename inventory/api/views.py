@@ -1,8 +1,10 @@
 from rest_framework.generics import GenericAPIView
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
+from core.exceptions.domain import FisherFishNotFoundError, FisherNotFoundError
 from inventory.domain.services.inventory_service import (
     get_inventory_item_list,
     get_inventory_fish_list,
@@ -53,7 +55,11 @@ class InventoryItemListView(GenericAPIView):
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        result = get_inventory_item_list(user=request.user)
+        try:
+            result = get_inventory_item_list(user=request.user)
+        except FisherNotFoundError as exc:
+            raise NotFound(detail=exc.default_detail)
+
         payload = {"success": True, "result": result}
 
         response_serializer = InventoryItemListResponseSerializer(data=payload)
@@ -65,8 +71,13 @@ class InventoryItemListView(GenericAPIView):
 class InventoryFishListView(GenericAPIView):
     """
     Retrieve the inventory fish list for the authenticated user.
-
     Requires an authenticated user with an associated fisher profile.
+        GET /api/inventory/fishes/
+    Responses:
+    - 200 OK: Successfully retrieved the inventory fish list.
+    - 401 Unauthorized: Authentication credentials were not provided or are invalid.
+    - 500 Internal Server Error: An unexpected error occurred while processing the request.
+
     """
 
     permission_classes = [IsAuthenticated]
@@ -80,7 +91,11 @@ class InventoryFishListView(GenericAPIView):
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        result = get_inventory_fish_list(user=request.user)
+        try:
+            result = get_inventory_fish_list(user=request.user)
+        except FisherNotFoundError as exc:
+            raise NotFound(detail=exc.default_detail)
+
         payload = {"success": True, "result": result}
 
         response_serializer = InventoryFishListResponseSerializer(payload)
@@ -121,12 +136,19 @@ class InventoryFishSellAPIView(GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        response = sell_fish(
-            user=request.user,
-            pk=serializer.validated_data["pk"],
-            fish_id=serializer.validated_data["fish_id"],
-            total_weight=serializer.validated_data["total_weight"],
-        )
+        try:
+            response = sell_fish(
+                user=request.user,
+                pk=serializer.validated_data["pk"],
+                fish_id=serializer.validated_data["fish_id"],
+                total_weight=serializer.validated_data["total_weight"],
+            )
+        except FisherNotFoundError as exc:
+            raise NotFound(detail=exc.default_detail)
+
+        except FisherFishNotFoundError as exc:
+            raise NotFound(detail=exc.default_detail)
+
         response_serializer = InventoryFishSellResponseSerializer(response)
         return Response(response_serializer.data, status=status.HTTP_200_OK)
 
@@ -158,11 +180,18 @@ class InventoryFisherFishDescriptionView(GenericAPIView):
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        response = set_description_fisher_fish(
-            user=request.user,
-            pk=serializer.validated_data["pk"],
-            description=serializer.validated_data["description"],
-        )
+        try:
+            response = set_description_fisher_fish(
+                user=request.user,
+                pk=serializer.validated_data["pk"],
+                description=serializer.validated_data["description"],
+            )
+        except FisherNotFoundError as exc:
+            raise NotFound(detail=exc.default_detail)
+
+        except FisherFishNotFoundError as exc:
+            raise NotFound(detail=exc.default_detail)
+
         response_serializer = InventoryFisherFishDescriptionResponseSerializer(response)
 
         return Response(response_serializer.data, status=status.HTTP_200_OK)

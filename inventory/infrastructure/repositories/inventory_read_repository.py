@@ -1,6 +1,9 @@
 from django.db import DatabaseError
 from core.exceptions.bd import RepositoryError
-from core.exceptions.domain import FishNotFoundError, FisherNotFoundError
+from core.exceptions.domain import (
+    FishNotFoundError,
+    FisherNotFoundError,
+)
 from fishers.models import Fisher
 from fish.models import Fish
 from inventory.models import FisherFish, FisherItem
@@ -34,8 +37,8 @@ def get_inventory_item_list_repository(user):
         ]
 
         return inventory
-    except Fisher.DoesNotExist:
-        raise FisherNotFoundError
+    except Fisher.DoesNotExist as exc:
+        raise FisherNotFoundError from exc
     except DatabaseError as exc:
         raise RepositoryError from exc
 
@@ -62,8 +65,8 @@ def get_inventory_fish_list_repository(user):
                 "fish__rarity",
             )
         )
-    except Fisher.DoesNotExist:
-        raise FisherNotFoundError
+    except Fisher.DoesNotExist as exc:
+        raise FisherNotFoundError from exc
     except DatabaseError as exc:
         raise RepositoryError from exc
 
