@@ -13,14 +13,23 @@ class UserNotFoundError(AppException):
 
 
 class FisherNotFoundError(AppException):
+    status_code = status.HTTP_404_NOT_FOUND
     default_code = "FISHER_NOT_FOUND"
     default_detail = "The authenticated user has no fisher profile."
 
 
 class FisherFishNotFoundError(AppException):
+    status_code = status.HTTP_404_NOT_FOUND
     default_code = "FISHER_FISH_NOT_FOUND"
     default_detail = (
         "The authenticated user has no fish associated according to the request"
+    )
+
+
+class FisherItemNotFoundError(AppException):
+    default_code = "FISHER_ITEM_NOT_FOUND"
+    default_detail = (
+        "The authenticated user has no item associated according to the request"
     )
 
 

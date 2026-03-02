@@ -6,13 +6,14 @@ from inventory.infrastructure.repositories.inventory_read_repository import (
     get_price_fish_to_sell,
 )
 from core.exceptions.bd import RepositoryError
-from core.exceptions.domain import FisherNotFoundError
+from core.exceptions.domain import FisherFishNotFoundError, FisherNotFoundError
 from math import floor
 from inventory.infrastructure.repositories.inventory_write_repository import (
     sell_fish_repository,
     set_description_fisher_fish_repository,
 )
 import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -146,6 +147,9 @@ def sell_fish(user, pk, fish_id, total_weight):
     except FisherNotFoundError:
         logger.exception("Repository failure while retrieving fisher data")
         raise
+    except FisherFishNotFoundError:
+        logger.exception("Repository failure while retrieving fisher fish data")
+        raise
     except RepositoryError:
         logger.exception("Repository failure while retrieving fisher fish data")
         raise
@@ -176,6 +180,9 @@ def set_description_fisher_fish(user, pk, description):
 
     except FisherNotFoundError:
         logger.exception("Repository failure while retrieving fisher data")
+        raise
+    except FisherFishNotFoundError:
+        logger.exception("Repository failure while retrieving fisher fish data")
         raise
     except RepositoryError:
         logger.exception("Repository failure while retrieving fisher fish data")
