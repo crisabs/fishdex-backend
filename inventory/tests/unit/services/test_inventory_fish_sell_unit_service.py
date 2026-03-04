@@ -6,9 +6,6 @@ from core.exceptions.domain import (
 )
 from inventory.domain.services.inventory_service import sell_fish
 import pytest
-import logging
-
-logger = logging.getLogger(__name__)
 
 
 @pytest.fixture
@@ -38,8 +35,6 @@ class TestInventoryFishSellSuccess:
             fish_id=sell_data_params["fish_id"],
             total_weight=sell_data_params["total_weight"],
         )
-
-        logger.info(f"result ->> {result}")
 
         assert result == mock_sell_fish_repository.return_value
 
