@@ -54,7 +54,7 @@ class TestInventoryFishDescriptionErrors:
     def test_inventory_fish_description_propagates_errors(
         self, mock_repository, valid_request_data, fake_user, exception_cls
     ):
-        mock_repository.side_effect = exception_cls
+        mock_repository.side_effect = exception_cls()
         with pytest.raises(exception_cls) as exc:
             set_description_fisher_fish(
                 user=fake_user,
