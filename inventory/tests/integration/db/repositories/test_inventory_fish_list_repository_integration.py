@@ -23,7 +23,7 @@ def test_inventory_fish_list_repository_success_integration(
     """
     GIVEN a user with an associated Fisher profile
     and at least one caught fish in the inventory
-    WHEN the repository retreives the inventory fishes for that user
+    WHEN the repository retrieves the inventory fishes for that user
     THEN it should return a list containing the fish details with correct fields
     """
     user, fisherFish = user_with_fisher_profile_and_fisher_fish
