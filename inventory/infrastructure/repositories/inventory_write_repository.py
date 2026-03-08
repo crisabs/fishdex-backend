@@ -49,9 +49,9 @@ def set_description_fisher_fish_repository(user, pk, description):
 
         with transaction.atomic():
             fisherFish.description = description
-            fisherFish.save()
+            fisherFish.save(update_fields=["description"])
 
-            return {"success": True}
+        return {"success": True}
 
     except Fisher.DoesNotExist as exc:
         raise FisherNotFoundError from exc
