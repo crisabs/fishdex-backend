@@ -87,8 +87,8 @@ class TestInventoryFishDescriptionIntegrationErrors:
         THEN the repository propagates the RepositoryError from the repository
 
         Note: This test simulates a database error by providing an excessively long description
-          that exceeds the maximum length defined in the model,
-          which should trigger a database-level error.
+        that exceeds the maximum length defined in the model,
+        which should trigger a database-level error.
 
         The test is marked with @pytest.mark.django_db(transaction=True) to ensure it runs within
         """
