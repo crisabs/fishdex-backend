@@ -51,6 +51,7 @@ class TestFishersChangeZoneSuccess:
         url = reverse("fishers:change_zone")
         payload = {"new_zone": "LAKE"}
         result = client.patch(url, payload, format="json")
+
         assert result.status_code == status.HTTP_200_OK
         assert result.data["code"] == "ZONE_CHANGED"
         assert result.data["new_zone"] == payload["new_zone"]
@@ -66,9 +67,10 @@ class TestFishersChangeZoneErrors:
         url = reverse("fishers:change_zone")
         payload = {"new_zone": "LAKE"}
         result = api_client.patch(url, payload, format="json")
+
         assert result.status_code == status.HTTP_401_UNAUTHORIZED
 
-    def test_fishers_change_zone_raises_fisher_not_found_errir(
+    def test_fishers_change_zone_raises_fisher_not_found_error(
         self, authenticated_user_without_fisher
     ):
         """
@@ -80,4 +82,5 @@ class TestFishersChangeZoneErrors:
         url = reverse("fishers:change_zone")
         payload = {"new_zone": "LAKE"}
         result = client.patch(url, payload, format="json")
+
         assert result.status_code == status.HTTP_404_NOT_FOUND
