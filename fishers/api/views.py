@@ -28,7 +28,6 @@ from fishers.api.serializers.fisher_nickname_request_serializer import (
 from fishers.api.serializers.fisher_nickname_response_serializer import (
     FisherNicknameResponseSerializer,
 )
-from rest_framework.exceptions import NotFound
 
 
 class FisherMeAPIView(GenericAPIView):
@@ -86,7 +85,7 @@ class FisherNicknameAPIView(GenericAPIView):
         try:
             response_service = set_fisher_nickname(user=request.user, nickname=nickname)
         except FisherNotFoundError as exc:
-            raise NotFound(exc.default_detail)
+            raise NotFound(detail=exc.default_detail)
 
         payload = {"success": True, "message": response_service}
         response_serializer = FisherNicknameResponseSerializer(payload)
@@ -115,9 +114,12 @@ class FisherChangeZoneAPIView(GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        result = set_fisher_zone(
-            request.user, new_zone=serializer.validated_data["new_zone"]
-        )
+        try:
+            result = set_fisher_zone(
+                request.user, new_zone=serializer.validated_data["new_zone"]
+            )
+        except FisherNotFoundError as exc:
+            raise NotFound(detail=exc.default_detail)
 
         serializer_response = FisherChangeZoneResponseSerializer(result)
 
