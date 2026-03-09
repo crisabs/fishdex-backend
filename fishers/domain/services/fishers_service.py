@@ -1,5 +1,4 @@
 from typing import Dict, Any
-from fish.models import Habitat
 from fishers.infrastructure.repositories.fishers_read_repository import (
     get_fisher_details_me_repository,
     get_fisher_coins,
