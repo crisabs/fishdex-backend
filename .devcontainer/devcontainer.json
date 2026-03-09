@@ -31,7 +31,10 @@
                 "aaron-bond.better-comments",
                 "usernamehw.errorlens",
                 "ms-python.vscode-pylance",
-                "christian-kohler.path-intellisense"
+                "christian-kohler.path-intellisense",
+                "streetsidesoftware.code-spell-checker",
+                "oderwat.indent-rainbow",
+                "esbenp.prettier-vscode"
             ]
         }
     }
