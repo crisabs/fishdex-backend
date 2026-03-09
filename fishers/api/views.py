@@ -1,5 +1,6 @@
 from rest_framework.generics import GenericAPIView
 from rest_framework import status
+from rest_framework.exceptions import NotFound
 from rest_framework import permissions
 from rest_framework.response import Response
 from core.exceptions.domain import FisherNotFoundError
@@ -82,12 +83,13 @@ class FisherNicknameAPIView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
 
         nickname = serializer.validated_data["nickname"]
-        response_service = set_fisher_nickname(user=request.user, nickname=nickname)
+        try:
+            response_service = set_fisher_nickname(user=request.user, nickname=nickname)
+        except FisherNotFoundError as exc:
+            raise NotFound(exc.default_detail)
 
-        response_serializer = FisherNicknameResponseSerializer(
-            data={"success": True, "message": response_service}
-        )
-        response_serializer.is_valid(raise_exception=True)
+        payload = {"success": True, "message": response_service}
+        response_serializer = FisherNicknameResponseSerializer(payload)
 
         return Response(response_serializer.data, status=status.HTTP_200_OK)
 
