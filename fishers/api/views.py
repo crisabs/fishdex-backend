@@ -2,16 +2,20 @@ from rest_framework.generics import GenericAPIView
 from rest_framework import status
 from rest_framework import permissions
 from rest_framework.response import Response
+from core.exceptions.domain import FisherNotFoundError
 from fishers.api.serializers.fisher_change_zone_request_serializer import (
     FisherChangeZoneRequestSerializer,
 )
 from fishers.api.serializers.fisher_change_zone_response_serializer import (
     FisherChangeZoneResponseSerializer,
 )
-from fishers.api.serializers.fisher_me_response_serializer import (
-    FisherMeResponseSerializer,
-)
 from drf_spectacular.utils import extend_schema
+from fishers.api.serializers.fishers_fisher_me_request_serializer import (
+    FishersFisherMeRequestSerializer,
+)
+from fishers.api.serializers.fishers_fisher_me_response_serializer import (
+    FishersFisherMeResponseSerializer,
+)
 from fishers.domain.services.fishers_service import (
     get_fisher_detail_me,
     set_fisher_nickname,
@@ -23,6 +27,7 @@ from fishers.api.serializers.fisher_nickname_request_serializer import (
 from fishers.api.serializers.fisher_nickname_response_serializer import (
     FisherNicknameResponseSerializer,
 )
+from rest_framework.exceptions import NotFound
 
 
 class FisherMeAPIView(GenericAPIView):
@@ -34,13 +39,25 @@ class FisherMeAPIView(GenericAPIView):
     """
 
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = FisherMeResponseSerializer
+    serializer_class = FishersFisherMeRequestSerializer
 
-    @extend_schema(responses=FisherMeResponseSerializer)
+    @extend_schema(
+        request=FishersFisherMeRequestSerializer,
+        responses=FishersFisherMeResponseSerializer,
+    )
     def get(self, request):
-        result = get_fisher_detail_me(user=request.user)
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        try:
+            result = get_fisher_detail_me(user=request.user)
+        except FisherNotFoundError as exc:
+            raise NotFound(detail=exc.default_detail)
+
+        payload = {"success": True, "result": result}
+        response_serializer = FishersFisherMeResponseSerializer(payload)
+
         return Response(
-            {"success": True, "data": result},
+            response_serializer.data,
             status=status.HTTP_200_OK,
         )
 
