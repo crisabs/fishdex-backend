@@ -1,11 +1,15 @@
 from typing import cast
+from rest_framework import status
 from rest_framework.test import APIClient
 from django.urls import reverse
 import pytest
 from rest_framework_simplejwt.tokens import RefreshToken
-from fishers.models import Fisher
 from typing import Tuple
 from django.contrib.auth.models import AbstractBaseUser
+
+from fishers.models import Fisher
+from fishers.tests.factories.fisher_factory import FisherFactory
+from fishers.tests.factories.user_factory import UserFactory
 
 
 @pytest.fixture
@@ -14,51 +18,79 @@ def api_client():
 
 
 @pytest.fixture
-def authenticated_user(
-    api_client, django_user_model
-) -> Tuple[APIClient, AbstractBaseUser]:
+def authenticated_user_with_fisher(
+    db, api_client
+) -> Tuple[APIClient, AbstractBaseUser, Fisher]:
     """
     Creates a user with a fisher profile and authenticates
     the client with a JWT access token.
     Returns the APIClient and the user instance.
     """
-    user = django_user_model.objects.create_user(
-        username="user_jwt@test.com", password="strongpassword123"
-    )
+    fisher = FisherFactory()
 
-    Fisher.objects.create(
-        user=user, nickname="JWT Fisher", level=10, coins=200, current_zone="Lake"
-    )
+    refresh = cast(RefreshToken, RefreshToken.for_user(fisher.user))
+    access_token = str(refresh.access_token)
 
-    refresh = cast(RefreshToken, RefreshToken.for_user(user))
+    api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
+    return api_client, fisher.user, fisher
+
+
+@pytest.fixture
+def authenticated_user_without_fisher_profile(db, api_client):
+    user = UserFactory()
+    refresh = cast(RefreshToken, RefreshToken.for_user(user=user))
     access_token = str(refresh.access_token)
 
     api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
     return api_client, user
 
 
-@pytest.mark.django_db
-def test_fisher_me_with_valid_jwt_returns_fisher_data(authenticated_user):
-    """
-    GIVEN a user with JWT
-    WHEN requesting /api/fishers/me/
-    THEN returns 200 OK and fisher data
-    """
+class TestFisherMeSuccess:
+    def test_fisher_me_with_valid_jwt_returns_fisher_data(
+        self,
+        authenticated_user_with_fisher,
+    ):
+        """
+        GIVEN a user with JWT
+        WHEN requesting /api/fishers/me/
+        THEN returns 200 OK and fisher data
+        """
 
-    # --- GIVEN ---
-    client, user = authenticated_user
+        client, user, fisher = authenticated_user_with_fisher
+        url = reverse("fishers:details_me")
+        response = client.get(url)
 
-    url = reverse("fishers:details_me")
+        assert response.status_code == 200
+        assert response.data["success"] is True
+        assert response.data["result"] == {
+            "nickname": fisher.nickname,
+            "level": fisher.level,
+            "coins": fisher.coins,
+            "current_zone": fisher.current_zone,
+        }
 
-    # --- WHEN ---
-    response = client.get(url)
 
-    # --- THEN ---
-    assert response.status_code == 200
-    assert response.data["success"] is True
-    assert response.data["data"] == {
-        "nickname": "JWT Fisher",
-        "level": 10,
-        "coins": 200,
-        "current_zone": "Lake",
-    }
+class TestFisherMeErrors:
+    def test_fisher_me_user_unauthenticated_error(self, api_client):
+        """
+        GIVEN an unauthenticated user
+        WHEN requesting /api/fishers/me/
+        THEN returns 401 Unauthorized"""
+        url = reverse("fishers:details_me")
+        result = api_client.get(url)
+        assert result.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_fisher_me_raises_fisher_not_found(
+        self,
+        authenticated_user_without_fisher_profile,
+    ):
+        """
+        GIVEN an authenticated user without a fisher profile
+        WHEN requesting /api/fishers/me/
+        THEN returns 404 Not Found with appropriate error message
+        """
+        url = reverse("fishers:details_me")
+        client, _ = authenticated_user_without_fisher_profile
+        result = client.get(url)
+
+        assert result.status_code == status.HTTP_404_NOT_FOUND
