@@ -18,7 +18,7 @@ def set_fisher_nickname_repository(user, nickname) -> str:
 
     Raises:
         FisherNotFoundError: User has no fisher profile.
-        RepositoryError: Databse error during update.
+        RepositoryError: Database error during update.
     """
     try:
         with transaction.atomic():
