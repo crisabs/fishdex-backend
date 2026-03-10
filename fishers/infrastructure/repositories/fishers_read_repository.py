@@ -11,7 +11,7 @@ def get_fisher_details_me_repository(user):
     """
     GIVEN a user that may or may have a corresponding Fisher record
     WHEN the repository function is called to fetch the fisher's details
-    THEN it returns the fisher's nickname, level, couns, and current zone if the record exists,
+    THEN it returns the fisher's nickname, level, counts, and current zone if the record exists,
     or raises FisherNotFoundError if not found,
     or RepositoryError if a database error occurs
     """
