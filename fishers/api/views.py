@@ -98,7 +98,7 @@ class FisherChangeZoneAPIView(GenericAPIView):
     GIVEN an authenticated user with a current fishing zone and a valid request payload
     containing a new zone
     WHEN the user sends a PATCH request to change their fishing zone
-    THEN the API validates the requets, calls set_fisher_zone to update the zone,
+    THEN the API validates the request, calls set_fisher_zone to update the zone,
     and returns a 200 OK response with the new zone if successful
     or raises an appropriate exception
     """
