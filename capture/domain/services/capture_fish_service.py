@@ -4,6 +4,8 @@ from core.exceptions.bd import RepositoryError
 from core.exceptions.domain import FisherNotFoundError
 from capture.infrastructure.repositories.capture_write_repository import (
     capture_fish_repository,
+    update_bait_quantity_repository,
+    update_rod_quantity_repository,
 )
 from capture.infrastructure.repositories.capture_read_repository import (
     get_item_effect,
@@ -37,14 +39,26 @@ def capture_fish_service(
             FisherNotFoundError: If the user has no associated Fisher.
             RepositoryError: If a persistence error occurs.
         """
+        # TODO:
+        # A lo menos debe existir seleccionada una caña
+        # Tras cualquier accion se disminuye una caña
+        # Si se usó un ansuelo se disminuye el ansuelo
+        bait_effect = 0
+        if bait_code:
+            bait_effect = get_item_effect(item_code=bait_code)
+
         rod_effect = get_item_effect(item_code=rod_code)
-        bait_effect = get_item_effect(item_code=bait_code)
 
         capture_power = rod_effect + bait_effect
         capture_probability = capture_power / (fish_weight + capture_power)
 
         random_roll = random.random()
         is_captured = random_roll < capture_probability
+
+        if bait_code:
+            update_bait_quantity_repository(user=user, bait_code=bait_code)
+
+        update_rod_quantity_repository(user=user, rod_code=rod_code)
 
         if not is_captured:
             return {"captured": False, "message": "The fish escaped"}
@@ -65,7 +79,7 @@ def get_spawned_fish(user=user):
     Returns a randomly spawned fish for the given user bases
     on the fisher's current zone.
 
-    Fish rarity is selected using weighted probabilities, priorizing the chosen rarity
+    Fish rarity is selected using weighted probabilities, prioritizing the chosen rarity
     and falling bck to any available fish when necessary.
 
     Raises:
