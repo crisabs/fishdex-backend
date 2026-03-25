@@ -62,10 +62,9 @@ class InventoryItemListView(GenericAPIView):
 
         payload = {"success": True, "result": result}
 
-        response_serializer = InventoryItemListResponseSerializer(data=payload)
-        response_serializer.is_valid(raise_exception=True)
+        response_serializer = InventoryItemListResponseSerializer(payload)
 
-        return Response(response_serializer.validated_data, status=status.HTTP_200_OK)
+        return Response(response_serializer.data, status=status.HTTP_200_OK)
 
 
 class InventoryFishListView(GenericAPIView):
@@ -176,7 +175,7 @@ class InventoryFisherFishDescriptionView(GenericAPIView):
             - 200 OK: Description successfully updated.
             - 400 Bad Request: Invalid input data.
             - 401 Unauthorized: Authentication credentials
-              were not provided or are invalid.
+            were not provided or are invalid.
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
