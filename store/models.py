@@ -12,6 +12,7 @@ class ItemStore(models.Model):
     type = models.CharField(
         max_length=15, choices=_ItemType.choices, default=_ItemType.BAIT
     )
+    quantity = models.PositiveIntegerField(default=0)
     price = models.PositiveIntegerField()
     effect = models.FloatField()
 
