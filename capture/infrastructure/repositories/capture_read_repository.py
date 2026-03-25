@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 def get_item_effect(item_code):
     """
-    Revieves the effect value of a store item by its code.
+    Retrieves the effect value of a store item by its code.
 
     Looks up the item in the store and returns its effect attribute.
 
