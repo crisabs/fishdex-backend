@@ -35,6 +35,9 @@ def get_list_fishes_by_habitat_repository(habitat):
         {
             "fish_id": fish.fish_id,
             "rarity": fish.rarity,
+            "name": fish.name,
+            "habitat": fish.habitat,
+            "base_price": fish.base_price,
         }
         for fish in fishes
     ]

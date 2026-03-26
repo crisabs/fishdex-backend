@@ -1,3 +1,5 @@
+from email.policy import default
+
 from rest_framework import serializers
 
 ITEM_CODES_ROD = {
@@ -10,6 +12,7 @@ ITEM_CODES_BAIT = {
     "Basic Bait": "BAIT_BASIC",
     "Super Bait": "BAIT_SUPER",
     "Ultra Bait": "BAIT_ULTRA",
+    "": "",
 }
 
 
