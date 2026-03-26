@@ -107,12 +107,13 @@ def get_spawned_fish(user=user) -> Dict[str, Any]:
         for fish in fishes:
             fishes_by_rarity[fish["rarity"]].append(fish)
 
-        weight = Decimal(str(random.uniform(0.1, 20.0))).quantize(Decimal("0.01"))
+        weight = Decimal(str(random.uniform(0.1, 10.0))).quantize(Decimal("0.01"))
 
         if fishes_by_rarity[selected_rarity]:
             return {
                 "fish_id": random.choice(fishes_by_rarity[selected_rarity])["fish_id"],
                 "name": random.choice(fishes_by_rarity[selected_rarity])["name"],
+                "rarity": random.choice(fishes_by_rarity[selected_rarity])["rarity"],
                 "total_weight": weight,
                 "habitat": random.choice(fishes_by_rarity[selected_rarity])["habitat"],
                 "base_price": random.choice(fishes_by_rarity[selected_rarity])[
@@ -123,6 +124,7 @@ def get_spawned_fish(user=user) -> Dict[str, Any]:
         return {
             "fish_id": random.choice(fishes)["fish_id"],
             "name": random.choice(fishes)["name"],
+            "rarity": random.choice(fishes)["rarity"],
             "total_weight": weight,
             "habitat": random.choice(fishes)["habitat"],
             "base_price": random.choice(fishes)["base_price"],
