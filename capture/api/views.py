@@ -1,4 +1,3 @@
-from venv import logger
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -24,7 +23,7 @@ from capture.api.serializers.capture_spawned_fish_request_serializer import (
 class CaptureFishAPIView(GenericAPIView):
     """
     API endpoint that handles fish capture attempts by an authenticated user,
-    valiting input and returning the capture result.
+    validating input and returning the capture result.
     """
 
     permission_classes = [permissions.IsAuthenticated]
@@ -74,10 +73,9 @@ class CaptureSpawnedFish(GenericAPIView):
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        response = get_spawned_fish(request.user)
-        payload = {"success": True, "result": response}
+        result = get_spawned_fish(request.user)
 
-        logger.info("payload %s", payload)
+        payload = {"success": True, "result": result}
 
         response_serializer = CaptureSpawnedFishResponseSerializer(payload)
         return Response(response_serializer.data, status=status.HTTP_200_OK)

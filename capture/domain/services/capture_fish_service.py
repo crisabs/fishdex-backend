@@ -13,7 +13,9 @@ from capture.infrastructure.repositories.capture_read_repository import (
     get_fisher_zone_repository,
 )
 import logging
+from decimal import Decimal
 import random
+
 
 from fishers.tests.unit.services.test_fishers_service import user
 
@@ -39,10 +41,7 @@ def capture_fish_service(
             FisherNotFoundError: If the user has no associated Fisher.
             RepositoryError: If a persistence error occurs.
         """
-        # TODO:
-        # A lo menos debe existir seleccionada una caña
-        # Tras cualquier accion se disminuye una caña
-        # Si se usó un ansuelo se disminuye el ansuelo
+
         bait_effect = 0
         if bait_code:
             bait_effect = get_item_effect(item_code=bait_code)
@@ -74,7 +73,7 @@ def capture_fish_service(
         raise
 
 
-def get_spawned_fish(user=user):
+def get_spawned_fish(user=user) -> Dict[str, Any]:
     """
     Returns a randomly spawned fish for the given user bases
     on the fisher's current zone.
@@ -104,12 +103,29 @@ def get_spawned_fish(user=user):
         fishes = get_list_fishes_by_habitat_repository(habitat=fisher_zone)
 
         fishes_by_rarity = {"COMMON": [], "RARE": [], "LEGENDARY": []}
+
         for fish in fishes:
             fishes_by_rarity[fish["rarity"]].append(fish)
 
-        if fishes_by_rarity[selected_rarity]:
-            return random.choice(fishes_by_rarity[selected_rarity])["fish_id"]
+        weight = Decimal(str(random.uniform(0.1, 20.0))).quantize(Decimal("0.01"))
 
-        return random.choice(fishes)["fish_id"]
+        if fishes_by_rarity[selected_rarity]:
+            return {
+                "fish_id": random.choice(fishes_by_rarity[selected_rarity])["fish_id"],
+                "name": random.choice(fishes_by_rarity[selected_rarity])["name"],
+                "total_weight": weight,
+                "habitat": random.choice(fishes_by_rarity[selected_rarity])["habitat"],
+                "base_price": random.choice(fishes_by_rarity[selected_rarity])[
+                    "base_price"
+                ],
+            }
+
+        return {
+            "fish_id": random.choice(fishes)["fish_id"],
+            "name": random.choice(fishes)["name"],
+            "total_weight": weight,
+            "habitat": random.choice(fishes)["habitat"],
+            "base_price": random.choice(fishes)["base_price"],
+        }
     except FisherNotFoundError:
         raise
