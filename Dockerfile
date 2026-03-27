@@ -12,4 +12,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["sh", "-c", "gunicorn fishdex.wsgi:application -c gunicorn_config.py --bind 0.0.0.0:$PORT"]
+EXPOSE 8000
+
+CMD exec gunicorn fishdex.wsgi:application -c gunicorn_config.py --bind 0.0.0.0:${PORT:-8000}
