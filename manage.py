@@ -7,11 +7,18 @@ import os
 import sys
 
 
+def get_runtime_environment() -> str:
+    """Prefer production automatically on Render when DJANGO_ENV is unset."""
+    return os.getenv("DJANGO_ENV") or (
+        "production" if os.getenv("RENDER", "").lower() == "true" else "development"
+    )
+
+
 def main():
     """Run administrative tasks."""
 
     # Detect environment
-    env = os.getenv("DJANGO_ENV", "development")
+    env = get_runtime_environment()
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", f"fishdex.settings.{env}")
 
     try:
