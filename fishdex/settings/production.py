@@ -30,6 +30,7 @@ CSRF_TRUSTED_ORIGINS = base.read_env_list("CSRF_TRUSTED_ORIGINS")
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = list(default_headers) + ["content-type", "authorization"]
 CORS_ALLOW_METHODS = list(default_methods) + ["OPTIONS"]
+CORS_PREFLIGHT_MAX_AGE = 86400
 
 database_url = os.getenv("DATABASE_URL", "").strip()
 if database_url:
