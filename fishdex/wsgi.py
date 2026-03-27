@@ -20,8 +20,15 @@ logging.basicConfig(
     format="[%(levelname)s] %(asctime)s - %(name)s.%(funcName)s:%(lineno)d - %(message)s",
 )
 
+# Prefer production automatically on Render when DJANGO_ENV is unset.
+def get_runtime_environment() -> str:
+    return os.getenv("DJANGO_ENV") or (
+        "production" if os.getenv("RENDER", "").lower() == "true" else "development"
+    )
+
+
 # Determine environment
-env = os.getenv("DJANGO_ENV", "development")
+env = get_runtime_environment()
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", f"fishdex.settings.{env}")
 
 application = get_wsgi_application()

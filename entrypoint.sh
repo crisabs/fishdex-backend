@@ -1,6 +1,10 @@
 #!/bin/sh
 set -e
 
+if [ -z "$DJANGO_ENV" ] && [ "${RENDER:-}" = "true" ]; then
+    export DJANGO_ENV="production"
+fi
+
 echo "=============================="
 echo "Iniciando FishDex ($DJANGO_ENV mode)"
 echo "=============================="
