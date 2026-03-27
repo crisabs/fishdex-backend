@@ -4,9 +4,11 @@ Base Django settings for Fishdex project.
 Contains common settings for all environments.
 """
 
+import os
 import sys
 from pathlib import Path
 from datetime import timedelta
+from django.core.exceptions import ImproperlyConfigured
 from config.service_settings import settings as service_settings
 
 # --- Paths ---
@@ -24,10 +26,23 @@ def read_secret(name: str) -> str | None:
         return None
 
 
+def read_env_list(name: str, default: str = "") -> list[str]:
+    """Read a comma-separated environment variable into a list."""
+    value = os.getenv(name, default)
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
 # --- Security ---
-SECRET_KEY = read_secret("django_secret_key") or "insecure-dev-key"
 DEBUG = service_settings.debug
-ALLOWED_HOSTS: list[str] = []
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY") or read_secret("django_secret_key")
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = "insecure-dev-key"
+    else:
+        raise ImproperlyConfigured(
+            "DJANGO_SECRET_KEY must be configured in non-development environments."
+        )
+ALLOWED_HOSTS = read_env_list("ALLOWED_HOSTS")
 
 # --- Installed Apps ---
 INSTALLED_APPS = [
@@ -53,8 +68,9 @@ INSTALLED_APPS = [
 
 # --- Middleware ---
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -103,7 +119,13 @@ USE_TZ = True
 # --- Static files ---
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATICFILES_DIRS = [BASE_DIR / "static"] if (BASE_DIR / "static").exists() else []
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    },
+}
 
 # --- Default primary key field type ---
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -128,6 +150,10 @@ SIMPLE_JWT = {
 
 # --- External Services ---
 DJANGO_API_URL = service_settings.django_api_url
+
+# --- Security / Proxy ---
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
 
 # --- Logging ---
 LOG_LEVEL = "DEBUG" if DEBUG else "INFO"

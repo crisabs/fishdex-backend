@@ -2,8 +2,8 @@ import os
 from pydantic import field_validator, ConfigDict
 from pydantic_settings import BaseSettings
 
-# Detecta entorno, ejemplo: dev, staging, prod
-ENV = os.getenv("DJANGO_ENV", "dev")
+# Detecta entorno, ejemplo: development, staging, production
+ENV = os.getenv("DJANGO_ENV", "development")
 
 
 class ServiceSettings(BaseSettings):
@@ -29,6 +29,3 @@ class ServiceSettings(BaseSettings):
 
 # Crear instancia de configuración
 settings = ServiceSettings()
-
-# Mostrar configuración cargada de manera segura
-print("CONFIG LOADED:", settings.model_dump())
