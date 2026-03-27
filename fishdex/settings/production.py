@@ -6,6 +6,16 @@ Production settings for Fishdex project.
 import os
 from . import base
 
+
+from corsheaders.defaults import default_headers, default_methods
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "content-type",
+    "authorization",
+]
+
+CORS_ALLOW_METHODS = list(default_methods) + ["OPTIONS"]
+
 # --- Copy all base uppercase settings into this module ---
 for setting_name in dir(base):
     if setting_name.isupper():
@@ -17,10 +27,12 @@ os.environ["DJANGO_DEBUG"] = "False"
 
 CORS_ALLOWED_ORIGINS = [
     "https://fishdex-frontend.onrender.com",
+    "https://www.fishdex-frontend.onrender.com",
 ]
 
 ALLOWED_HOSTS = [
     "fishdex-backend-pww8.onrender.com",
+    "www.fishdex-backend-pww8.onrender.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
