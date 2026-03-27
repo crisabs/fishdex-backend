@@ -22,8 +22,15 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
     SpectacularRedocView,
 )
+from django.http import JsonResponse
+
+
+def health(request):
+    return JsonResponse({"status": "ok"})
+
 
 urlpatterns = [
+    path("", health),
     path("admin/", admin.site.urls),
     # Auth
     path("api/auth/", include("accounts.api.urls")),
