@@ -14,7 +14,10 @@ for setting_name in dir(base):
 # --- Environment-specific overrides ---
 DEBUG = False
 os.environ["DJANGO_DEBUG"] = "False"
-ALLOWED_HOSTS = ["yourdomain.com", "api.yourdomain.com"]
+ALLOWED_HOSTS = [
+    "https://fishdex-frontend.onrender.com",
+    "https://fishdex-frontend.onrender.com",
+]
 
 DATABASES = {
     "default": {
