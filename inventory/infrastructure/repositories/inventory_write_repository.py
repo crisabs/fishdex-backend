@@ -4,9 +4,13 @@ from core.exceptions.domain import FisherFishNotFoundError, FisherNotFoundError
 from fishers.models import Fisher
 from inventory.models import FisherFish
 from django.db import transaction
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def sell_fish_repository(user, pk, total_price):
+    logger.debug(f"total price coins on sell repository {total_price}")
     try:
         with transaction.atomic():
             fisher = Fisher.objects.select_for_update().get(user=user)

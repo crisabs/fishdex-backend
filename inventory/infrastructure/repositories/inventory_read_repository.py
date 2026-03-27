@@ -8,6 +8,7 @@ from fishers.models import Fisher
 from fish.models import Fish
 from inventory.models import FisherFish, FisherItem
 import logging
+from inventory.domain.utils.price_calculator import get_fisher_fish_price
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +59,7 @@ def get_inventory_fish_list_repository(user):
             .select_related("fish")
             .values(
                 "fish__name",
+                "fish__id",
                 "fish__base_price",
                 "weight",
                 "pk",
@@ -91,6 +93,8 @@ def get_price_fish_to_sell(fish_id, total_weight):
 
     try:
         fish = Fish.objects.get(fish_id=fish_id)
-        return fish.base_price * total_weight
+        return get_fisher_fish_price(
+            fisher_fish_base_price=fish.base_price, fisher_fish_weight=total_weight
+        )
     except Fish.DoesNotExist as exc:
         raise FishNotFoundError from exc

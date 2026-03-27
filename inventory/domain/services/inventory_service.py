@@ -1,13 +1,12 @@
-from decimal import Decimal
 from typing import Any, Dict
 from inventory.infrastructure.repositories.inventory_read_repository import (
     get_inventory_item_list_repository,
     get_inventory_fish_list_repository,
     get_price_fish_to_sell,
 )
+from inventory.domain.utils.price_calculator import get_fisher_fish_price
 from core.exceptions.bd import RepositoryError
 from core.exceptions.domain import FisherFishNotFoundError, FisherNotFoundError
-from math import floor
 from inventory.infrastructure.repositories.inventory_write_repository import (
     sell_fish_repository,
     set_description_fisher_fish_repository,
@@ -63,14 +62,16 @@ def get_inventory_fish_list(user) -> list[Dict[str, Any]]:
         inventory = []
 
         for fisherFish in fishes_list:
-            price = floor(
-                Decimal(fisherFish["fish__base_price"]) * Decimal(fisherFish["weight"])
+            price = get_fisher_fish_price(
+                fisher_fish_base_price=fisherFish["fish__base_price"],
+                fisher_fish_weight=fisherFish["weight"],
             )
 
             inventory.append(
                 {
                     "fish_name": fisherFish["fish__name"],
                     "price": price,
+                    "fish_id": fisherFish["fish__id"],
                     "pk": fisherFish["pk"],
                     "weight": fisherFish["weight"],
                     "caught_at": fisherFish["caught_at"],
@@ -106,7 +107,7 @@ def sell_fish(user, pk, fish_id, total_weight):
 
     Returns:
         dict: A dictionary containing the result of the operation.
-              Example: {"code": "OK"}
+            Example: {"code": "OK"}
 
     Raises:
         FisherNotFoundError: If the fisher associated with the user does not exist.
@@ -129,13 +130,15 @@ def sell_fish(user, pk, fish_id, total_weight):
 
     Returns:
         dict: A dictionary indicating a successful operation.
-              Example: {"code": "OK"}
+            Example: {"code": "OK"}
 
     Raises:
         FisherNotFoundError: If no fisher exists for the given user.
         FisherFishNotFoundError: If the inventory record does not exist.
         RepositoryError: If a database-level error occurs during the operation.
     """
+
+    logger.debug(f"total price coins on sell service {total_price}")
     try:
         result = sell_fish_repository(
             user=user,
