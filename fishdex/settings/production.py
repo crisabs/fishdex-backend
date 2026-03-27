@@ -20,8 +20,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 ALLOWED_HOSTS = [
-    "fishdex-frontend.onrender.com",
-    "fishdex-frontend.onrender.com",
+    "fishdex-backend-pww8.onrender.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
