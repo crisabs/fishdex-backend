@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "corsheaders",
     # Project apps
+    "core",
     "accounts",
     "fishers",
     "fish",
