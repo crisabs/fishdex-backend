@@ -14,8 +14,7 @@ APP_PORT="${PORT:-8000}"
 # 1️⃣ Migraciones
 echo "Aplicando migraciones..."
 python manage.py migrate --noinput
-python manage.py create_superuser_if_not_exists
-
+python manage.py create_superuser_if_not_exists || echo "Superuser creation skipped"
 
 # 2️⃣ Collect static files en producción
 if [ "$DJANGO_ENV" = "production" ]; then
