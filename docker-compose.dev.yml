@@ -3,9 +3,9 @@ services:
     image: fishdex-backend:1.0.0
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: Dockerfile
     container_name: fishdex-backend  
-    command: ["bash","docker/entrypoint.sh"]
+    command: ["bash","entrypoint.sh"]
     volumes:
       - ./:/workspace
       - logs_django:/var/log/django
