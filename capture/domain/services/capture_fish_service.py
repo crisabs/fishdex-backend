@@ -25,6 +25,8 @@ logger = logging.getLogger(__name__)
 def capture_fish_service(
     user, rod_code, bait_code, fish_id, fish_weight, fish_length
 ) -> Dict[str, Any]:
+    difficulty_modifier = 0.1
+
     try:
         """
         Executes the fish capture attempt for a user.
@@ -49,9 +51,11 @@ def capture_fish_service(
         rod_effect = get_item_effect(item_code=rod_code)
 
         capture_power = rod_effect + bait_effect
-        capture_probability = capture_power / (fish_weight + capture_power)
+        capture_probability = max(
+            0.15, capture_power / ((fish_weight * difficulty_modifier) + capture_power)
+        )
 
-        random_roll = random.random()
+        random_roll = random.random() ** 0.5
         is_captured = random_roll < capture_probability
 
         if bait_code:
@@ -107,7 +111,7 @@ def get_spawned_fish(user=user) -> Dict[str, Any]:
         for fish in fishes:
             fishes_by_rarity[fish["rarity"]].append(fish)
 
-        weight = Decimal(str(random.uniform(0.1, 10.0))).quantize(Decimal("0.01"))
+        weight = Decimal(str(random.uniform(0.1, 3.0))).quantize(Decimal("0.01"))
 
         if fishes_by_rarity[selected_rarity]:
             return {
